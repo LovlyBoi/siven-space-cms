@@ -8,7 +8,7 @@ module.exports = {
     'eslint:recommended',
     'plugin:vue/vue3-essential',
     'plugin:@typescript-eslint/recommended',
-    'prettier'
+    'plugin:prettier/recommended',
   ],
   overrides: [],
   // parser: '@typescript-eslint/parser',
@@ -24,7 +24,6 @@ module.exports = {
   rules: {
     indent: ['error', 2, { SwitchCase: 1 }],
     'linebreak-style': ['error', 'unix'],
-    quotes: ['error', 'single'],
     semi: ['error', 'never'],
     'vue/multi-word-component-names': 'off',
   },

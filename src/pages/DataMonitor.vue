@@ -1,7 +1,7 @@
 <template>
-  <div>main</div>
+  <div>数据监控</div>
 </template>
 
 <script setup lang="ts"></script>
 
-<style lang="ts" scoped></style>
+<style scoped></style>
