@@ -49,6 +49,15 @@
             style="width: 300px"
           />
         </n-form-item>
+        <n-form-item label="博客封面">
+          <n-upload
+            list-type="image-card"
+            :custom-request="handleImageRequest"
+            @remove="handleImageRemove"
+          >
+            点击上传
+          </n-upload>
+        </n-form-item>
         <n-form-item label="上传文章（md 文件）">
           <n-upload
             style="width: 400px"
@@ -56,8 +65,8 @@
             :max="1"
             accept=".md"
             directory-dnd
-            :custom-request="customRequest"
-            @remove="handleUploadRemove"
+            :custom-request="handleMarkdownRequest"
+            @remove="handleMarkdownRemove"
           >
             <n-upload-dragger>
               <div style="margin-bottom: 12px">
@@ -76,7 +85,7 @@
           </n-upload>
         </n-form-item>
       </n-form>
-      <n-button>
+      <n-button @click="handleSubmit">
         <n-icon>
           <PaperPlaneIcon />
         </n-icon>
@@ -102,6 +111,7 @@ import {
   NIcon,
   NButton,
   useMessage,
+  UploadFileInfo,
 } from 'naive-ui'
 import type { FormInst, UploadCustomRequestOptions } from 'naive-ui'
 import {
@@ -109,17 +119,24 @@ import {
   PaperPlaneOutline as PaperPlaneIcon,
 } from '@vicons/ionicons5'
 import { typeOptions, tagColorOptions } from './options'
-import { uploadMarkdown } from '@/api'
+import {
+  uploadMarkdown,
+  uploadImage,
+  publishBlog,
+  deleteBlog,
+  deleteImage,
+} from '@/api'
+import { BlogToPost, BlogType } from '@/types'
 
 const message = useMessage()
 
 const formRef = ref<FormInst>()
 
-const formValue = ref({
+const formValue = ref<BlogToPost>({
   id: '',
-  author: '',
   title: '',
-  type: 1,
+  author: '',
+  type: BlogType.note,
   tag: {
     name: '',
     color: 'indigo',
@@ -127,13 +144,15 @@ const formValue = ref({
   pictures: [],
 })
 
-const customRequest = async ({
-  file,
-  data,
-  headers,
-  onError,
-  onFinish,
-}: UploadCustomRequestOptions) => {
+interface FileRecord {
+  fileId: string
+  value: string
+}
+
+// 记录原始文件id和服务器id，方便删除文件
+let imageRecords: FileRecord[] = []
+
+const fileLoader = ({ file, data }: UploadCustomRequestOptions) => {
   const formData = new FormData()
   if (data) {
     Object.keys(data).forEach((key) => {
@@ -144,6 +163,33 @@ const customRequest = async ({
     })
   }
   formData.append('file', file.file as File)
+  return formData
+}
+
+const handleImageRequest = async (options: UploadCustomRequestOptions) => {
+  const { file, headers, onError, onFinish } = options
+  const formData = fileLoader(options)
+  try {
+    const { url } = await uploadImage(
+      formData,
+      headers as Record<string, string>
+    )
+    // 新增图片，更新记录
+    imageRecords.push({ fileId: file.id, value: url[0] })
+    // 更新表单
+    formValue.value.pictures = imageRecords.map((item) => item.value)
+    message.success(`图片 [${file.name}] 上传成功`)
+    onFinish()
+  } catch (e) {
+    console.log(e)
+    message.error(`图片 [${file.name}] 上传失败`)
+    onError()
+  }
+}
+
+const handleMarkdownRequest = async (options: UploadCustomRequestOptions) => {
+  const { file, headers, onError, onFinish } = options
+  const formData = fileLoader(options)
   try {
     const { id } = await uploadMarkdown(
       formData,
@@ -159,11 +205,42 @@ const customRequest = async ({
   }
 }
 
-const handleUploadRemove = () => {
-  // TODO: 还应该告知服务器删除文件
+const handleImageRemove = ({
+  file,
+}: {
+  file: UploadFileInfo
+  fileList: UploadFileInfo[]
+}) => {
+  let removedUrl: string | null = null
+  // 更新记录
+  imageRecords = imageRecords.filter((item) => {
+    if (item.fileId === file.id) {
+      removedUrl = item.value
+    }
+    return item.fileId !== file.id
+  })
+  if (removedUrl == null) return
+  // 更新表单项
+  formValue.value.pictures = imageRecords.map((item) => item.value)
+  console.log('删除图片', removedUrl)
+  deleteImage(removedUrl)
+}
+
+const handleMarkdownRemove = () => {
   console.log('删除文件', formValue.value.id)
+  deleteBlog(formValue.value.id)
   formValue.value.id = ''
 }
-</script>
 
-<style scoped></style>
+const handleSubmit = async () => {
+  // TODO: 提交blog
+  try {
+    const request = await publishBlog(formValue.value)
+    console.log(request)
+    message.success('发布成功')
+  } catch (e) {
+    console.warn(e)
+    message.error('发布失败')
+  }
+}
+</script>

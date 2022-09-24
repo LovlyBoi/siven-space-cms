@@ -9,6 +9,8 @@ interface Card {
   pictures: string[]
 }
 
+type BlogToPost = Omit<Card, 'publishDate' | 'updateDate'>
+
 type TagColor = 'yellow' | 'pink' | 'green' | 'indigo'
 
 enum BlogType {
@@ -42,4 +44,12 @@ const mapColor: { [k in TagColor]: string } = {
 }
 
 export { BlogType, mapColor }
-export type { Card, TagColor, OutlineItem, Outline, ParsedHtml, Blog }
+export type {
+  Card,
+  BlogToPost,
+  TagColor,
+  OutlineItem,
+  Outline,
+  ParsedHtml,
+  Blog,
+}

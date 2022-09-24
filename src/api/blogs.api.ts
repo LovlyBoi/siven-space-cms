@@ -1,5 +1,5 @@
 import { request } from '@/request'
-import type { Card, Blog } from '@/types'
+import type { Card, Blog, BlogToPost } from '@/types'
 
 function getAllBlogs() {
   return request<Card[]>({
@@ -35,4 +35,26 @@ function getBlogById(id: string) {
   })
 }
 
-export { getAllBlogs, getNotes, getEssays, getBlogById }
+function publishBlog(blog: BlogToPost) {
+  return request({
+    method: 'POST',
+    url: '/blogs/publish',
+    data: blog,
+  })
+}
+
+function deleteBlog(id: string) {
+  return request({
+    method: 'DELETE',
+    url: `/blogs/${id}`,
+  })
+}
+
+export {
+  getAllBlogs,
+  getNotes,
+  getEssays,
+  getBlogById,
+  publishBlog,
+  deleteBlog,
+}
