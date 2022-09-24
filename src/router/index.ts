@@ -3,7 +3,7 @@ import type { RouteRecordRaw } from 'vue-router'
 
 import MainPage from '@/pages/Main.vue'
 import AllBlogsPage from '@/pages/AllBlogs/AllBlogs.vue'
-import PublishBlogPage from '@/pages/PublishBlog.vue'
+import PublishBlogPage from '@/pages/PublishBlog/PublishBlog.vue'
 import DataMonitorPage from '@/pages/DataMonitor.vue'
 
 const routes: RouteRecordRaw[] = [
