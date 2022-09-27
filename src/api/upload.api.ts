@@ -26,4 +26,11 @@ function deleteImage(url: string) {
   })
 }
 
-export { uploadMarkdown, uploadImage, deleteImage }
+function deleteMarkdown(id: string) {
+  return request({
+    method: 'DELETE',
+    url: `/upload/markdown/${id}`,
+  })
+}
+
+export { uploadMarkdown, uploadImage, deleteImage, deleteMarkdown }

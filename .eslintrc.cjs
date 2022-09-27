@@ -26,5 +26,6 @@ module.exports = {
     'linebreak-style': ['error', 'unix'],
     semi: ['error', 'never'],
     'vue/multi-word-component-names': 'off',
+    '@typescript-eslint/no-explicit-any': 'off',
   },
 }

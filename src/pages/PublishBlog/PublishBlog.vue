@@ -7,7 +7,7 @@
             placeholder="author"
             :maxlength="15"
             v-model:value="formValue.author"
-            :allow-input="(value: string) => !value.startsWith(' ') && !value.endsWith(' ')"
+            @blur="formValue.author = formValue.author.trim()"
             clearable
             show-count
             style="width: 300px"
@@ -18,8 +18,8 @@
             placeholder="title"
             :maxlength="40"
             v-model:value="formValue.title"
+            @blur="formValue.title = formValue.title.trim()"
             type="textarea"
-            :allow-input="(value: string) => !value.startsWith(' ') && !value.endsWith(' ')"
             show-count
             style="width: 400px"
           />
@@ -43,7 +43,7 @@
             placeholder="tag color"
             :maxlength="15"
             v-model:value="formValue.tag.name"
-            :allow-input="(value: string) => !value.startsWith(' ') && !value.endsWith(' ')"
+            @blur="formValue.tag.name = formValue.tag.name.trim()"
             clearable
             show-count
             style="width: 300px"
@@ -51,15 +51,20 @@
         </n-form-item>
         <n-form-item label="博客封面">
           <n-upload
+            ref="imageUploaderRef"
+            v-model:file-list="imageFileList"
             list-type="image-card"
             :custom-request="handleImageRequest"
             @remove="handleImageRemove"
+            accept="image/*"
           >
             点击上传
           </n-upload>
         </n-form-item>
         <n-form-item label="上传文章（md 文件）">
           <n-upload
+            ref="markdownUploaderRef"
+            v-model:file-list="markdownFileList"
             style="width: 400px"
             :default-file-list="[]"
             :max="1"
@@ -91,8 +96,8 @@
         </n-icon>
         &nbsp; 冲！发布！
       </n-button>
-      <pre>{{ JSON.stringify(formValue, null, 2) }}</pre>
     </n-card>
+    <pre>{{ JSON.stringify(formValue, null, 2) }}</pre>
   </div>
 </template>
 
@@ -123,7 +128,7 @@ import {
   uploadMarkdown,
   uploadImage,
   publishBlog,
-  deleteBlog,
+  deleteMarkdown,
   deleteImage,
 } from '@/api'
 import { BlogToPost, BlogType } from '@/types'
@@ -131,6 +136,12 @@ import { BlogToPost, BlogType } from '@/types'
 const message = useMessage()
 
 const formRef = ref<FormInst>()
+
+const imageFileList = ref<UploadFileInfo[]>([])
+const imageUploaderRef = ref<InstanceType<typeof NUpload>>()
+
+const markdownFileList = ref<UploadFileInfo[]>([])
+const markdownUploaderRef = ref<InstanceType<typeof NUpload>>()
 
 const formValue = ref<BlogToPost>({
   id: '',
@@ -228,7 +239,7 @@ const handleImageRemove = ({
 
 const handleMarkdownRemove = () => {
   console.log('删除文件', formValue.value.id)
-  deleteBlog(formValue.value.id)
+  deleteMarkdown(formValue.value.id)
   formValue.value.id = ''
 }
 
@@ -238,9 +249,25 @@ const handleSubmit = async () => {
     const request = await publishBlog(formValue.value)
     console.log(request)
     message.success('发布成功')
+    Object.assign(formValue.value, {
+      id: '',
+      title: '',
+      author: '',
+      type: BlogType.note,
+      tag: {
+        name: '',
+        color: 'indigo',
+      },
+      pictures: [],
+    })
+    imageFileList.value = []
+    markdownFileList.value = []
+    imageUploaderRef.value?.clear()
+    markdownUploaderRef.value?.clear()
+    imageRecords = []
   } catch (e) {
     console.warn(e)
-    message.error('发布失败')
+    message.error((e as any).response?.data || '发布失败')
   }
 }
 </script>

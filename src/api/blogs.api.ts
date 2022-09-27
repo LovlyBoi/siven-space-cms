@@ -43,18 +43,4 @@ function publishBlog(blog: BlogToPost) {
   })
 }
 
-function deleteBlog(id: string) {
-  return request({
-    method: 'DELETE',
-    url: `/blogs/${id}`,
-  })
-}
-
-export {
-  getAllBlogs,
-  getNotes,
-  getEssays,
-  getBlogById,
-  publishBlog,
-  deleteBlog,
-}
+export { getAllBlogs, getNotes, getEssays, getBlogById, publishBlog }
