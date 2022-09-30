@@ -5,6 +5,7 @@ import MainPage from '@/pages/Main.vue'
 import AllBlogsPage from '@/pages/AllBlogs/AllBlogs.vue'
 import PublishBlogPage from '@/pages/PublishBlog/PublishBlog.vue'
 import DataMonitorPage from '@/pages/DataMonitor.vue'
+import EditPage from '@/pages/EditPage.vue'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -21,6 +22,11 @@ const routes: RouteRecordRaw[] = [
     path: '/blogs/publish-blog',
     name: 'publishBlog',
     component: PublishBlogPage,
+  },
+  {
+    path: '/blogs/edit-blog/:id',
+    name: 'editBlog',
+    component: EditPage,
   },
   {
     path: '/data-monitor',

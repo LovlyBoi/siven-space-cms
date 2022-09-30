@@ -4,6 +4,7 @@ export {
   getNotes,
   getBlogById,
   publishBlog,
+  deleteBlog,
 } from './blogs.api'
 export {
   uploadMarkdown,
