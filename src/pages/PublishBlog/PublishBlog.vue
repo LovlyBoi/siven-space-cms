@@ -97,7 +97,6 @@
         &nbsp; 冲！发布！
       </n-button>
     </n-card>
-    <pre>{{ JSON.stringify(formValue, null, 2) }}</pre>
   </div>
 </template>
 

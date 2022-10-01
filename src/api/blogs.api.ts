@@ -5,6 +5,9 @@ function getAllBlogs() {
   return request<Card[]>({
     method: 'GET',
     url: '/blogs?from=cms',
+    params: {
+      from: 'cms',
+    },
   })
 }
 
@@ -14,6 +17,7 @@ function getNotes() {
     url: '/blogs?from=cms',
     params: {
       type: 'note',
+      from: 'cms',
     },
   })
 }
@@ -24,14 +28,20 @@ function getEssays() {
     url: '/blogs?from=cms',
     params: {
       type: 'essay',
+      from: 'cms',
     },
   })
 }
 
-function getBlogById(id: string) {
-  return request<Blog>({
+function getBlogById<T = Blog>(id: string, type = '') {
+  const params: Record<string, string> = {
+    from: 'cms',
+  }
+  type ? (params.type = type) : null
+  return request<T>({
     method: 'GET',
-    url: `/blogs/${id}?from=cms`,
+    url: `/blogs/${id}`,
+    params,
   })
 }
 
@@ -40,6 +50,9 @@ function publishBlog(blog: BlogToPost) {
     method: 'POST',
     url: '/blogs/publish?from=cms',
     data: blog,
+    params: {
+      from: 'cms',
+    },
   })
 }
 
@@ -47,6 +60,22 @@ function deleteBlog(id: string) {
   return request({
     method: 'DELETE',
     url: `/blogs/${id}`,
+    params: {
+      from: 'cms',
+    },
+  })
+}
+
+function editBlog(id: string, content: string) {
+  return request<string>({
+    method: 'POST',
+    url: `/blogs/edit/${id}`,
+    params: {
+      from: 'cms',
+    },
+    data: {
+      content,
+    },
   })
 }
 
@@ -57,4 +86,5 @@ export {
   getBlogById,
   publishBlog,
   deleteBlog,
+  editBlog,
 }

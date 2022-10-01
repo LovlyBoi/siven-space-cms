@@ -10,7 +10,7 @@
             <MenuBar />
             <n-layout-content>
               <RouterView v-slot="{ Component }">
-                <keep-alive>
+                <keep-alive exclude="EditPage">
                   <component :is="Component" />
                 </keep-alive>
               </RouterView>

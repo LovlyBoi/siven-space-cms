@@ -5,6 +5,7 @@ import MainPage from '@/pages/Main.vue'
 import AllBlogsPage from '@/pages/AllBlogs/AllBlogs.vue'
 import PublishBlogPage from '@/pages/PublishBlog/PublishBlog.vue'
 import DataMonitorPage from '@/pages/DataMonitor.vue'
+import PermissionManagement from '@/pages/PermissionManagement.vue'
 import EditPage from '@/pages/EditPage.vue'
 
 const routes: RouteRecordRaw[] = [
@@ -36,7 +37,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/permission-management',
     name: 'permission-management',
-    component: DataMonitorPage,
+    component: PermissionManagement,
   },
 ]
 

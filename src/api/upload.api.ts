@@ -6,6 +6,9 @@ function uploadMarkdown(data: FormData, headers?: Record<string, string>) {
     method: 'POST',
     data,
     headers,
+    params: {
+      from: 'cms',
+    },
   })
 }
 
