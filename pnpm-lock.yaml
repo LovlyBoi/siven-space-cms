@@ -14,6 +14,7 @@ specifiers:
   axios: ^0.27.2
   commitizen: ^4.2.5
   dayjs: ^1.11.5
+  echarts: ^5.4.0
   eslint: ^8.22.0
   eslint-config-prettier: ^8.5.0
   eslint-define-config: ^1.6.0
@@ -42,6 +43,7 @@ dependencies:
   '@vicons/ionicons5': 0.12.0
   axios: 0.27.2
   dayjs: 1.11.5
+  echarts: 5.4.0
   mavon-editor: 3.0.0-beta
   pinia: 2.0.22_arz4dztosvwy2ghjrlh2wdhejm
   vue: 3.2.39
@@ -1489,6 +1491,13 @@ packages:
     dependencies:
       is-obj: 2.0.0
     dev: true
+
+  /echarts/5.4.0:
+    resolution: {integrity: sha512-uPsO9VRUIKAdFOoH3B0aNg7NRVdN7aM39/OjovjO9MwmWsAkfGyeXJhK+dbRi51iDrQWliXV60/XwLA7kg3z0w==}
+    dependencies:
+      tslib: 2.3.0
+      zrender: 5.4.0
+    dev: false
 
   /electron-to-chromium/1.4.251:
     resolution: {integrity: sha512-k4o4cFrWPv4SoJGGAydd07GmlRVzmeDIJ6MaEChTUjk4Dmomn189tCicSzil2oyvbPoGgg2suwPDNWq4gWRhoQ==}
@@ -4093,6 +4102,10 @@ packages:
     resolution: {integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==}
     dev: true
 
+  /tslib/2.3.0:
+    resolution: {integrity: sha512-N82ooyxVNm6h1riLCoyS9e3fuJ3AMG2zIZs2Gd1ATcSFjSA23Q0fzjjZeh0jbJvWVDZ0cJT8yaNNaaXHzueNjg==}
+    dev: false
+
   /tslib/2.4.0:
     resolution: {integrity: sha512-d6xOpEDfsi2CZVlPQzGeux8XMwLT9hssAsaPYExaQMuYskwb+x1x7J371tWlbBdWHroy99KnVB6qIkUbs5X3UQ==}
     dev: true
@@ -4485,3 +4498,9 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
     dev: true
+
+  /zrender/5.4.0:
+    resolution: {integrity: sha512-rOS09Z2HSVGFs2dn/TuYk5BlCaZcVe8UDLLjj1ySYF828LATKKdxuakSZMvrDz54yiKPDYVfjdKqcX8Jky3BIA==}
+    dependencies:
+      tslib: 2.3.0
+    dev: false
