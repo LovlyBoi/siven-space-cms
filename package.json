@@ -17,6 +17,8 @@
   "dependencies": {
     "@vicons/ionicons5": "^0.12.0",
     "axios": "^0.27.2",
+    "dayjs": "^1.11.5",
+    "mavon-editor": "3.0.0-beta",
     "pinia": "^2.0.22",
     "vue": "^3.2.37",
     "vue-router": "^4.1.5"
@@ -36,6 +38,7 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-define-config": "^1.6.0",
     "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-vue": "^9.4.0",
     "husky": "^8.0.1",
     "inquirer": "8",
