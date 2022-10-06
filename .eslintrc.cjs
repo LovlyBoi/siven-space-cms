@@ -22,9 +22,6 @@ module.exports = {
   },
   plugins: ['vue', '@typescript-eslint'],
   rules: {
-    indent: ['error', 2, { SwitchCase: 1 }],
-    'linebreak-style': ['error', 'unix'],
-    semi: ['error', 'never'],
     'vue/multi-word-component-names': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
   },

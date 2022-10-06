@@ -50,28 +50,24 @@
           />
         </n-form-item>
         <n-form-item label="博客封面">
-          <n-upload
+          <FileUploader
+            type="image"
             ref="imageUploaderRef"
-            v-model:file-list="imageFileList"
             list-type="image-card"
-            :custom-request="handleImageRequest"
-            @remove="handleImageRemove"
-            accept="image/*"
+            @file-update="handleImageUploadUpdate"
+            @file-error="handleImageUploadError"
+            @file-remove="handleImageRemove"
           >
             点击上传
-          </n-upload>
+          </FileUploader>
         </n-form-item>
         <n-form-item label="上传文章（md 文件）">
-          <n-upload
+          <FileUploader
             ref="markdownUploaderRef"
-            v-model:file-list="markdownFileList"
             style="width: 400px"
-            :default-file-list="[]"
-            :max="1"
-            accept=".md"
-            directory-dnd
-            :custom-request="handleMarkdownRequest"
-            @remove="handleMarkdownRemove"
+            @file-update="handleMardownUploadUpdate"
+            @file-error="handleMarkdownUploadError"
+            @file-remove="handleMarkdownRemove"
           >
             <n-upload-dragger>
               <div style="margin-bottom: 12px">
@@ -87,7 +83,7 @@
                 ^_^
               </n-p>
             </n-upload-dragger>
-          </n-upload>
+          </FileUploader>
         </n-form-item>
       </n-form>
       <n-button @click="handleSubmit">
@@ -96,7 +92,11 @@
         </n-icon>
         &nbsp; 冲！发布！
       </n-button>
+      <button @click="imageUploaderRef?.clear()">clear</button>
     </n-card>
+    <pre>
+      {{ JSON.stringify(formValue, null, 2) }}
+    </pre>
   </div>
 </template>
 
@@ -108,39 +108,27 @@ import {
   NFormItem,
   NInput,
   NSelect,
-  NUpload,
   NUploadDragger,
   NText,
   NP,
   NIcon,
   NButton,
   useMessage,
-  UploadFileInfo,
 } from 'naive-ui'
-import type { FormInst, UploadCustomRequestOptions } from 'naive-ui'
+import type { FormInst } from 'naive-ui'
 import {
   CloudUploadOutline as CloudUploadIcon,
   PaperPlaneOutline as PaperPlaneIcon,
 } from '@vicons/ionicons5'
+import FileUploader from '@/components/FileUploader.vue'
 import { typeOptions, tagColorOptions } from './options'
-import {
-  uploadMarkdown,
-  uploadImage,
-  publishBlog,
-  deleteMarkdown,
-  deleteImage,
-} from '@/api'
+import { publishBlog } from '@/api'
 import { BlogToPost, BlogType } from '@/types'
+import { FileInfo } from 'naive-ui/es/upload/src/interface'
 
 const message = useMessage()
 
 const formRef = ref<FormInst>()
-
-const imageFileList = ref<UploadFileInfo[]>([])
-const imageUploaderRef = ref<InstanceType<typeof NUpload>>()
-
-const markdownFileList = ref<UploadFileInfo[]>([])
-const markdownUploaderRef = ref<InstanceType<typeof NUpload>>()
 
 const formValue = ref<BlogToPost>({
   id: '',
@@ -154,93 +142,57 @@ const formValue = ref<BlogToPost>({
   pictures: [],
 })
 
-interface FileRecord {
-  fileId: string
-  value: string
-}
+const imageUploaderRef = ref<InstanceType<typeof FileUploader>>()
+const markdownUploaderRef = ref<InstanceType<typeof FileUploader>>()
 
-// 记录原始文件id和服务器id，方便删除文件
-let imageRecords: FileRecord[] = []
-
-const fileLoader = ({ file, data }: UploadCustomRequestOptions) => {
-  const formData = new FormData()
-  if (data) {
-    Object.keys(data).forEach((key) => {
-      formData.append(
-        'file',
-        data[key as keyof UploadCustomRequestOptions['data']]
-      )
-    })
-  }
-  formData.append('file', file.file as File)
-  return formData
-}
-
-const handleImageRequest = async (options: UploadCustomRequestOptions) => {
-  const { file, headers, onError, onFinish } = options
-  const formData = fileLoader(options)
-  try {
-    const { url } = await uploadImage(
-      formData,
-      headers as Record<string, string>
-    )
-    // 新增图片，更新记录
-    imageRecords.push({ fileId: file.id, value: url[0] })
-    // 更新表单
-    formValue.value.pictures = imageRecords.map((item) => item.value)
-    message.success(`图片 [${file.name}] 上传成功`)
-    onFinish()
-  } catch (e) {
-    console.log(e)
-    message.error(`图片 [${file.name}] 上传失败`)
-    onError()
-  }
-}
-
-const handleMarkdownRequest = async (options: UploadCustomRequestOptions) => {
-  const { file, headers, onError, onFinish } = options
-  const formData = fileLoader(options)
-  try {
-    const { id } = await uploadMarkdown(
-      formData,
-      headers as Record<string, string>
-    )
-    formValue.value.id = id[0]
-    message.success(`文件 [${file.name}] 上传成功`)
-    onFinish()
-  } catch (e) {
-    console.log(e)
-    message.error(`文件 [${file.name}] 上传失败`)
-    onError()
-  }
-}
-
-const handleImageRemove = ({
+const handleImageUploadUpdate = ({
+  records,
   file,
 }: {
-  file: UploadFileInfo
-  fileList: UploadFileInfo[]
+  records: string[]
+  file: Required<FileInfo>
 }) => {
-  let removedUrl: string | null = null
-  // 更新记录
-  imageRecords = imageRecords.filter((item) => {
-    if (item.fileId === file.id) {
-      removedUrl = item.value
-    }
-    return item.fileId !== file.id
-  })
-  if (removedUrl == null) return
-  // 更新表单项
-  formValue.value.pictures = imageRecords.map((item) => item.value)
-  console.log('删除图片', removedUrl)
-  deleteImage(removedUrl)
+  formValue.value.pictures = records
+  message.success(`图片 [${file.name}] 上传成功`)
 }
 
-const handleMarkdownRemove = () => {
-  console.log('删除文件', formValue.value.id)
-  deleteMarkdown(formValue.value.id)
-  formValue.value.id = ''
+const handleImageUploadError = ({
+  error,
+  file,
+}: {
+  error: unknown
+  file: Required<FileInfo>
+}) => {
+  console.log(error)
+  message.error(`图片 [${file.name}] 上传失败`)
 }
+
+const handleImageRemove = (records: string[]) =>
+  (formValue.value.pictures = records)
+
+const handleMardownUploadUpdate = ({
+  records,
+  file,
+}: {
+  records: string[]
+  file: Required<FileInfo>
+}) => {
+  formValue.value.id = records[0]
+  message.success(`文件 [${file.name}] 上传成功`)
+}
+
+const handleMarkdownUploadError = ({
+  error,
+  file,
+}: {
+  error: unknown
+  file: Required<FileInfo>
+}) => {
+  console.log(error)
+  message.error(`文件 [${file.name}] 上传失败`)
+}
+
+const handleMarkdownRemove = () => (formValue.value.id = '')
 
 const handleSubmit = async () => {
   // TODO: 提交blog
@@ -259,11 +211,8 @@ const handleSubmit = async () => {
       },
       pictures: [],
     })
-    imageFileList.value = []
-    markdownFileList.value = []
     imageUploaderRef.value?.clear()
     markdownUploaderRef.value?.clear()
-    imageRecords = []
   } catch (e) {
     console.warn(e)
     message.error((e as any).response?.data || '发布失败')

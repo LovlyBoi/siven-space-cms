@@ -26,6 +26,7 @@
         </template>
       </n-empty>
     </n-card>
+    <edit-modal v-model="showModal" :data="rowBlogForEditModal" />
   </div>
 </template>
 
@@ -45,20 +46,25 @@ import {
   useDialog,
   useMessage,
 } from 'naive-ui'
+import EditModal from './EditModal.vue'
 import type { DataTableColumns } from 'naive-ui'
-import { handleCards, Blog, BlogType2Ch } from './Columns'
-import { mapColor } from '@/types'
+import { BlogType2Ch } from './utils'
+import { mapColor, Card } from '@/types'
 import dayjs from '@/utils/day'
 import { getNotes, deleteBlog } from '@/api'
 
-let cards = ref<Blog[]>()
+let cards = ref<Card[]>()
 
 const router = useRouter()
+
+const showModal = ref(false)
 
 const message = useMessage()
 const dialog = useDialog()
 
-const createColumns = (): DataTableColumns<Blog> => {
+const rowBlogForEditModal = ref<Card | null>(null)
+
+const createColumns = (): DataTableColumns<Card> => {
   return [
     {
       title: 'ID',
@@ -88,22 +94,21 @@ const createColumns = (): DataTableColumns<Blog> => {
       title: '类型',
       key: 'type',
       render({ type }) {
-        return h('span', {}, BlogType2Ch[type as 'note' | 'essay'] || type)
+        return h('span', {}, BlogType2Ch[type])
       },
     },
     {
       title: 'tag',
       key: 'tag',
-      render({ tagColor, tagName }) {
+      render({ tag: { color, name } }) {
         return h(
           'div',
           {
             class:
-              mapColor[tagColor] +
-              ' text-xs font-light text-white inline-block',
+              mapColor[color] + ' text-xs font-light text-white inline-block',
             style: 'padding: 1px 6px; border-radius: 4px',
           },
-          tagName
+          name
         )
       },
     },
@@ -189,6 +194,22 @@ const createColumns = (): DataTableColumns<Blog> => {
                   },
                 },
                 {
+                  default: () => '在线修改',
+                }
+              ),
+              h(
+                NButton,
+                {
+                  text: true,
+                  onClick: () => {
+                    rowBlogForEditModal.value = row
+                    showModal.value = true
+                  },
+                  // onClick: () => {
+                  //   router.push(`/blogs/edit-blog/${row.id}`)
+                  // },
+                },
+                {
                   default: () => '编辑',
                 }
               ),
@@ -212,7 +233,7 @@ const createColumns = (): DataTableColumns<Blog> => {
   ]
 }
 
-const handleRemoveConfirm = (row: Blog) => {
+const handleRemoveConfirm = (row: Card) => {
   dialog.warning({
     title: '删除',
     content: `你确定删除 [${row.title}] 这篇博客？`,
@@ -256,7 +277,7 @@ const handleRemoveConfirm = (row: Blog) => {
   })
 }
 
-const handleRemove = async ({ id }: Blog) => {
+const handleRemove = async ({ id }: Card) => {
   console.log(id, 'delete')
   await deleteBlog(id)
   message.success('删除成功')
@@ -269,7 +290,7 @@ let error = ref(false)
 function initData() {
   getNotes()
     .then((data) => {
-      cards.value = handleCards(data)
+      cards.value = data
       loading.value = false
     })
     .catch((err) => {
