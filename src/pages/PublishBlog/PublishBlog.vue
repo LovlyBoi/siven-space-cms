@@ -92,11 +92,7 @@
         </n-icon>
         &nbsp; 冲！发布！
       </n-button>
-      <button @click="imageUploaderRef?.clear()">clear</button>
     </n-card>
-    <pre>
-      {{ JSON.stringify(formValue, null, 2) }}
-    </pre>
   </div>
 </template>
 

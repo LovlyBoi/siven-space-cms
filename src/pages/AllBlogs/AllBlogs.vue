@@ -16,7 +16,7 @@
         :data="cards"
         :bordered="false"
         :paginate-single-page="false"
-        :pagination="{ pageSize: 5 }"
+        :pagination="{ pageSize: 8 }"
       />
       <n-empty v-if="!loading && error" description="数据加载失败">
         <template #extra>
@@ -150,30 +150,32 @@ const createColumns = (): DataTableColumns<Card> => {
       title: '封面',
       key: 'cover',
       render: ({ pictures }) => {
-        return h(
-          NImageGroup,
-          {},
-          {
-            default: () =>
-              h(
-                NSpace,
-                {},
-                {
-                  default: () =>
-                    pictures.map((pic) => {
-                      return h(NImage, {
-                        src: pic + '?w=70',
-                        previewSrc: pic,
-                        width: '50',
-                        height: '50',
-                        objectFit: 'cover',
-                        lazy: true,
-                      })
-                    }),
-                }
-              ),
-          }
-        )
+        return pictures.length > 0
+          ? h(
+              NImageGroup,
+              {},
+              {
+                default: () =>
+                  h(
+                    NSpace,
+                    {},
+                    {
+                      default: () =>
+                        pictures.map((pic) => {
+                          return h(NImage, {
+                            src: pic + '?w=70',
+                            previewSrc: pic,
+                            width: '50',
+                            height: '50',
+                            objectFit: 'cover',
+                            lazy: true,
+                          })
+                        }),
+                    }
+                  ),
+              }
+            )
+          : h('span', { class: 'text-gray-400' }, '暂无封面')
       },
     },
     {

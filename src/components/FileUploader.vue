@@ -41,14 +41,14 @@ export default defineComponent({
       data: FormData,
       headers?: Record<string, string>
     ) {
-      let record: string[]
+      let record: string[] = []
       if (props.type === 'markdown') {
         const { id } = await uploadMarkdown(
           data,
           headers as Record<string, string>
         )
         record = id
-      } else {
+      } else if (props.type === 'image') {
         const { url } = await uploadImage(
           data,
           headers as Record<string, string>
@@ -61,7 +61,7 @@ export default defineComponent({
     function removeItem(record: string) {
       if (props.type === 'markdown') {
         deleteMarkdown(record)
-      } else {
+      } else if (props.type === 'image') {
         deleteImage(record)
       }
     }

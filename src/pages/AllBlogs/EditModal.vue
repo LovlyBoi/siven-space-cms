@@ -64,15 +64,28 @@
             class="mx-1 text-green-700 underline hover:text-green-600"
             @click="handleClose"
             :to="`/blogs/edit-blog/${formValue.id}`"
+            >在线修改</router-link
           >
-            在线修改
-          </router-link>
           或
-          <span
-            class="mx-1 text-green-700 underline cursor-pointer hover:text-green-600"
+          <n-upload
+            abstract
+            :action="`${baseUrl}/upload/markdown/reupload/${data?.id || ''}`"
+            :headers="{
+              // 'naive-info': 'hello!',
+            }"
+            :data="{
+              // id: data?.id || '',
+            }"
+            @finish="handleReUploadFinish"
           >
-            重新上传
-          </span>
+            <n-upload-trigger #="{ handleClick }" abstract>
+              <span
+                class="mx-1 text-green-700 underline cursor-pointer hover:text-green-600"
+                @click="handleClick"
+                >重新上传</span
+              >
+            </n-upload-trigger>
+          </n-upload>
           。
         </n-form-item>
       </n-form>
@@ -103,9 +116,29 @@ import {
   NFormItem,
   NInput,
   NSelect,
+  NUpload,
+  NUploadTrigger,
+  useMessage,
 } from 'naive-ui'
+import type { UploadFileInfo } from 'naive-ui'
 import { BlogType, Card } from '@/types'
 import { typeOptions, tagColorOptions } from '../PublishBlog/options'
+
+const emit = defineEmits(['update:modelValue'])
+
+const props = defineProps({
+  modelValue: {
+    type: Boolean,
+  },
+  data: {
+    type: [Object, null] as PropType<Card | null>,
+    required: true,
+  },
+})
+
+const message = useMessage()
+
+const baseUrl = import.meta.env.VITE_AXIOS_BASEURL
 
 const deepClone = <T extends object>(obj: T): T =>
   JSON.parse(JSON.stringify(obj))
@@ -124,17 +157,19 @@ const defaultFormValue = {
 
 const formValue = ref(deepClone(defaultFormValue))
 
-const props = defineProps({
-  modelValue: {
-    type: Boolean,
-  },
-  data: {
-    type: [Object, null] as PropType<Card | null>,
-    required: true,
-  },
-})
-
-const emit = defineEmits(['update:modelValue'])
+const handleReUploadFinish = ({
+  event,
+}: {
+  file: UploadFileInfo
+  event?: ProgressEvent
+}) => {
+  // console.log('finish', event?.target.response)
+  message.success(JSON.parse((event?.target as XMLHttpRequest).response).msg)
+  // const ext = file.name.split('.')[1]
+  // file.name = `更名.${ext}`
+  // file.url = '__HTTPS__://www.mocky.io/v2/5e4bafc63100007100d8b70f'
+  // return file
+}
 
 const showModal = computed({
   get: () => {
@@ -153,3 +188,9 @@ const handleClose = () => {
   Object.assign(formValue.value, defaultFormValue)
 }
 </script>
+
+<style>
+.box-block {
+  display: block !important;
+}
+</style>

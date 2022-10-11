@@ -4,7 +4,7 @@ import type { Card, Blog, BlogToPost } from '@/types'
 function getAllBlogs() {
   return request<Card[]>({
     method: 'GET',
-    url: '/blogs?from=cms',
+    url: '/blogs',
     params: {
       from: 'cms',
     },
@@ -14,7 +14,7 @@ function getAllBlogs() {
 function getNotes() {
   return request<Card[]>({
     method: 'GET',
-    url: '/blogs?from=cms',
+    url: '/blogs',
     params: {
       type: 'note',
       from: 'cms',
@@ -25,7 +25,7 @@ function getNotes() {
 function getEssays() {
   return request<Card[]>({
     method: 'GET',
-    url: '/blogs?from=cms',
+    url: '/blogs',
     params: {
       type: 'essay',
       from: 'cms',
@@ -48,7 +48,7 @@ function getBlogById<T = Blog>(id: string, type = '') {
 function publishBlog(blog: BlogToPost) {
   return request({
     method: 'POST',
-    url: '/blogs/publish?from=cms',
+    url: '/blogs/publish',
     data: blog,
     params: {
       from: 'cms',
