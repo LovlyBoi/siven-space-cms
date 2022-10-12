@@ -5,7 +5,8 @@ export {
   getBlogById,
   publishBlog,
   deleteBlog,
-  editBlog,
+  editBlogMarkdown,
+  editBlogInfo,
 } from './blogs.api'
 export {
   uploadMarkdown,

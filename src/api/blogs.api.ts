@@ -66,16 +66,24 @@ function deleteBlog(id: string) {
   })
 }
 
-function editBlog(id: string, content: string) {
+function editBlogMarkdown(id: string, content: string) {
   return request<string>({
     method: 'POST',
-    url: `/blogs/edit/${id}`,
+    url: `/blogs/edit/markdown/${id}`,
     params: {
       from: 'cms',
     },
     data: {
       content,
     },
+  })
+}
+
+function editBlogInfo(newBlogInfo: BlogToPost) {
+  return request<string>({
+    method: 'POST',
+    url: '/blogs/edit/blog',
+    data: newBlogInfo,
   })
 }
 
@@ -86,5 +94,6 @@ export {
   getBlogById,
   publishBlog,
   deleteBlog,
-  editBlog,
+  editBlogMarkdown,
+  editBlogInfo,
 }

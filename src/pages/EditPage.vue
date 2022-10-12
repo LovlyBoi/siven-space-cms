@@ -20,7 +20,7 @@ import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import Editor from '@/components/Editor.vue'
 import { NButton, useMessage } from 'naive-ui'
-import { getBlogById, editBlog } from '@/api'
+import { getBlogById, editBlogMarkdown } from '@/api'
 
 const message = useMessage()
 
@@ -42,7 +42,7 @@ getBlogById<string>(blogId, 'markdown')
 const handleSubmit = async () => {
   submiting.value = true
   try {
-    await editBlog(blogId, BlogMarkdown.value)
+    await editBlogMarkdown(blogId, BlogMarkdown.value)
     message.success('修改成功')
   } catch (e) {
     message.error('修改失败')

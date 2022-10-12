@@ -64,8 +64,9 @@
             class="mx-1 text-green-700 underline hover:text-green-600"
             @click="handleClose"
             :to="`/blogs/edit-blog/${formValue.id}`"
-            >在线修改</router-link
           >
+            在线修改
+          </router-link>
           或
           <n-upload
             abstract
@@ -99,7 +100,9 @@
           >
             当我没点开过
           </n-button>
-          <n-button tertiary type="primary">修改！</n-button>
+          <n-button tertiary type="primary" @click="handleSubmitEdit">
+            修改！
+          </n-button>
         </div>
       </template>
     </n-card>
@@ -107,7 +110,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, PropType } from 'vue'
+import { ref, computed, PropType, toRaw } from 'vue'
 import {
   NModal,
   NCard,
@@ -121,10 +124,11 @@ import {
   useMessage,
 } from 'naive-ui'
 import type { UploadFileInfo } from 'naive-ui'
-import { BlogType, Card } from '@/types'
+import { BlogToPost, BlogType, Card } from '@/types'
 import { typeOptions, tagColorOptions } from '../PublishBlog/options'
+import { editBlogInfo } from '@/api'
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'update'])
 
 const props = defineProps({
   modelValue: {
@@ -143,7 +147,7 @@ const baseUrl = import.meta.env.VITE_AXIOS_BASEURL
 const deepClone = <T extends object>(obj: T): T =>
   JSON.parse(JSON.stringify(obj))
 
-const defaultFormValue = {
+const defaultFormValue: BlogToPost = {
   id: '',
   title: '',
   author: '',
@@ -155,7 +159,7 @@ const defaultFormValue = {
   pictures: [],
 }
 
-const formValue = ref(deepClone(defaultFormValue))
+const formValue = ref<BlogToPost>(deepClone(defaultFormValue))
 
 const handleReUploadFinish = ({
   event,
@@ -163,12 +167,7 @@ const handleReUploadFinish = ({
   file: UploadFileInfo
   event?: ProgressEvent
 }) => {
-  // console.log('finish', event?.target.response)
   message.success(JSON.parse((event?.target as XMLHttpRequest).response).msg)
-  // const ext = file.name.split('.')[1]
-  // file.name = `更名.${ext}`
-  // file.url = '__HTTPS__://www.mocky.io/v2/5e4bafc63100007100d8b70f'
-  // return file
 }
 
 const showModal = computed({
@@ -186,6 +185,20 @@ const showModal = computed({
 const handleClose = () => {
   showModal.value = false
   Object.assign(formValue.value, defaultFormValue)
+}
+
+const handleSubmitEdit = async () => {
+  const newBlogInfo = toRaw(formValue.value)
+  console.log(newBlogInfo)
+  try {
+    const result = await editBlogInfo(newBlogInfo)
+    message.success(result)
+    emit('update')
+    handleClose()
+  } catch (e) {
+    console.log(e)
+    message.error('更新失败')
+  }
 }
 </script>
 

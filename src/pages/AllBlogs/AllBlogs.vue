@@ -26,7 +26,11 @@
         </template>
       </n-empty>
     </n-card>
-    <edit-modal v-model="showModal" :data="rowBlogForEditModal" />
+    <edit-modal
+      v-model="showModal"
+      :data="rowBlogForEditModal"
+      @update="handleEditModalUpdate"
+    />
   </div>
 </template>
 
@@ -51,7 +55,7 @@ import type { DataTableColumns } from 'naive-ui'
 import { BlogType2Ch } from './utils'
 import { mapColor, Card } from '@/types'
 import dayjs from '@/utils/day'
-import { getNotes, deleteBlog } from '@/api'
+import { getAllBlogs, deleteBlog } from '@/api'
 
 let cards = ref<Card[]>()
 
@@ -283,27 +287,34 @@ const handleRemove = async ({ id }: Card) => {
   console.log(id, 'delete')
   await deleteBlog(id)
   message.success('删除成功')
-  initData()
+  getData()
 }
 
 let loading = ref(true)
 let error = ref(false)
 
-function initData() {
-  getNotes()
+function getData() {
+  loading.value = true
+  getAllBlogs()
     .then((data) => {
       cards.value = data
-      loading.value = false
     })
     .catch((err) => {
-      loading.value = false
       error.value = true
       cards.value = []
       console.log(err)
     })
+    .finally(() => {
+      loading.value = false
+    })
 }
 
-initData()
+getData()
+
+const handleEditModalUpdate = () => {
+  console.log('handleEditModalUpdate')
+  getData()
+}
 
 const columns = createColumns()
 </script>
