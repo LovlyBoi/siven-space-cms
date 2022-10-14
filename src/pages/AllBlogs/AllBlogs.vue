@@ -10,14 +10,27 @@
           :repeat="5"
         />
       </div>
-      <n-data-table
-        v-if="!loading && !error"
-        :columns="columns"
-        :data="cards"
-        :bordered="false"
-        :paginate-single-page="false"
-        :pagination="{ pageSize: 8 }"
-      />
+      <n-watermark
+        content="⚠️核心机密⚠️"
+        cross
+        selectable
+        :font-size="18"
+        :line-height="18"
+        :width="500"
+        :height="300"
+        :x-offset="12"
+        :y-offset="28"
+        :rotate="-15"
+      >
+        <n-data-table
+          v-if="!loading && !error"
+          :columns="columns"
+          :data="cards"
+          :bordered="false"
+          :paginate-single-page="false"
+          :pagination="{ pageSize: 8 }"
+        />
+      </n-watermark>
       <n-empty v-if="!loading && error" description="数据加载失败">
         <template #extra>
           <n-button @click="$router.replace('/')" size="small">
@@ -35,7 +48,7 @@
 </template>
 
 <script setup lang="ts">
-import { h, ref } from 'vue'
+import { computed, h, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import {
   NCard,
@@ -47,6 +60,7 @@ import {
   NImageGroup,
   NPopover,
   NButton,
+  NWatermark,
   useDialog,
   useMessage,
 } from 'naive-ui'
@@ -57,7 +71,9 @@ import { mapColor, Card } from '@/types'
 import dayjs from '@/utils/day'
 import { getAllBlogs, deleteBlog } from '@/api'
 
-let cards = ref<Card[]>()
+const cards = ref<Card[]>()
+
+const cardsToShow = computed(() => [])
 
 const router = useRouter()
 
@@ -172,7 +188,6 @@ const createColumns = (): DataTableColumns<Card> => {
                             width: '50',
                             height: '50',
                             objectFit: 'cover',
-                            lazy: true,
                           })
                         }),
                     }

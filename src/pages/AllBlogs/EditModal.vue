@@ -63,7 +63,7 @@
           <router-link
             class="mx-1 text-green-700 underline hover:text-green-600"
             @click="handleClose"
-            :to="`/blogs/edit-blog/${formValue.id}`"
+            :to="`/blogs/edit-blog/${formValue.id || 'empty-id'}`"
           >
             在线修改
           </router-link>
@@ -98,7 +98,7 @@
             style="margin-right: 10px"
             @click="handleClose"
           >
-            当我没点开过
+            算了
           </n-button>
           <n-button tertiary type="primary" @click="handleSubmitEdit">
             修改！
