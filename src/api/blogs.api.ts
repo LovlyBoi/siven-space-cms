@@ -11,9 +11,10 @@ function getAllBlogs() {
 function getNotes() {
   return request<Card[]>({
     method: 'GET',
-    url: '/blogs',
+    url: '/blogs?from=cms',
     params: {
       type: 'note',
+      from: 'cms',
     },
   })
 }
