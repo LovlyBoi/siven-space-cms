@@ -31,7 +31,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/data-monitor',
     name: 'dataMonitor',
-    component: () => import('@/pages/DataMonitor.vue'),
+    component: () => import('@/pages/DataMonitor/DataMonitor.vue'),
   },
   {
     path: '/permission-management',

@@ -10,14 +10,27 @@
           :repeat="5"
         />
       </div>
-      <n-data-table
-        v-if="!loading && !error"
-        :columns="columns"
-        :data="cards"
-        :bordered="false"
-        :paginate-single-page="false"
-        :pagination="{ pageSize: 5 }"
-      />
+      <n-watermark
+        content="⚠️核心机密⚠️"
+        cross
+        selectable
+        :font-size="18"
+        :line-height="18"
+        :width="500"
+        :height="300"
+        :x-offset="12"
+        :y-offset="28"
+        :rotate="-15"
+      >
+        <n-data-table
+          v-if="!loading && !error"
+          :columns="columns"
+          :data="cards"
+          :bordered="false"
+          :paginate-single-page="false"
+          :pagination="{ pageSize: 8 }"
+        />
+      </n-watermark>
       <n-empty v-if="!loading && error" description="数据加载失败">
         <template #extra>
           <n-button @click="$router.replace('/')" size="small">
@@ -26,11 +39,16 @@
         </template>
       </n-empty>
     </n-card>
+    <edit-modal
+      v-model="showModal"
+      :data="rowBlogForEditModal"
+      @update="handleEditModalUpdate"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { h, ref } from 'vue'
+import { computed, h, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import {
   NCard,
@@ -42,23 +60,31 @@ import {
   NImageGroup,
   NPopover,
   NButton,
+  NWatermark,
   useDialog,
   useMessage,
 } from 'naive-ui'
+import EditModal from './EditModal.vue'
 import type { DataTableColumns } from 'naive-ui'
-import { handleCards, Blog, BlogType2Ch } from './Columns'
-import { mapColor } from '@/types'
+import { BlogType2Ch } from './utils'
+import { mapColor, Card } from '@/types'
 import dayjs from '@/utils/day'
-import { getNotes, deleteBlog } from '@/api'
+import { getAllBlogs, deleteBlog } from '@/api'
 
-let cards = ref<Blog[]>()
+const cards = ref<Card[]>()
+
+const cardsToShow = computed(() => [])
 
 const router = useRouter()
+
+const showModal = ref(false)
 
 const message = useMessage()
 const dialog = useDialog()
 
-const createColumns = (): DataTableColumns<Blog> => {
+const rowBlogForEditModal = ref<Card | null>(null)
+
+const createColumns = (): DataTableColumns<Card> => {
   return [
     {
       title: 'ID',
@@ -88,22 +114,21 @@ const createColumns = (): DataTableColumns<Blog> => {
       title: '类型',
       key: 'type',
       render({ type }) {
-        return h('span', {}, BlogType2Ch[type as 'note' | 'essay'] || type)
+        return h('span', {}, BlogType2Ch[type])
       },
     },
     {
       title: 'tag',
       key: 'tag',
-      render({ tagColor, tagName }) {
+      render({ tag: { color, name } }) {
         return h(
           'div',
           {
             class:
-              mapColor[tagColor] +
-              ' text-xs font-light text-white inline-block',
+              mapColor[color] + ' text-xs font-light text-white inline-block',
             style: 'padding: 1px 6px; border-radius: 4px',
           },
-          tagName
+          name
         )
       },
     },
@@ -145,30 +170,31 @@ const createColumns = (): DataTableColumns<Blog> => {
       title: '封面',
       key: 'cover',
       render: ({ pictures }) => {
-        return h(
-          NImageGroup,
-          {},
-          {
-            default: () =>
-              h(
-                NSpace,
-                {},
-                {
-                  default: () =>
-                    pictures.map((pic) => {
-                      return h(NImage, {
-                        src: pic + '?w=70',
-                        previewSrc: pic,
-                        width: '50',
-                        height: '50',
-                        objectFit: 'cover',
-                        lazy: true,
-                      })
-                    }),
-                }
-              ),
-          }
-        )
+        return pictures.length > 0
+          ? h(
+              NImageGroup,
+              {},
+              {
+                default: () =>
+                  h(
+                    NSpace,
+                    {},
+                    {
+                      default: () =>
+                        pictures.map((pic) => {
+                          return h(NImage, {
+                            src: pic + '?w=70',
+                            previewSrc: pic,
+                            width: '50',
+                            height: '50',
+                            objectFit: 'cover',
+                          })
+                        }),
+                    }
+                  ),
+              }
+            )
+          : h('span', { class: 'text-gray-400' }, '暂无封面')
       },
     },
     {
@@ -187,6 +213,22 @@ const createColumns = (): DataTableColumns<Blog> => {
                   onClick: () => {
                     router.push(`/blogs/edit-blog/${row.id}`)
                   },
+                },
+                {
+                  default: () => '在线修改',
+                }
+              ),
+              h(
+                NButton,
+                {
+                  text: true,
+                  onClick: () => {
+                    rowBlogForEditModal.value = row
+                    showModal.value = true
+                  },
+                  // onClick: () => {
+                  //   router.push(`/blogs/edit-blog/${row.id}`)
+                  // },
                 },
                 {
                   default: () => '编辑',
@@ -212,7 +254,7 @@ const createColumns = (): DataTableColumns<Blog> => {
   ]
 }
 
-const handleRemoveConfirm = (row: Blog) => {
+const handleRemoveConfirm = (row: Card) => {
   dialog.warning({
     title: '删除',
     content: `你确定删除 [${row.title}] 这篇博客？`,
@@ -256,31 +298,38 @@ const handleRemoveConfirm = (row: Blog) => {
   })
 }
 
-const handleRemove = async ({ id }: Blog) => {
+const handleRemove = async ({ id }: Card) => {
   console.log(id, 'delete')
   await deleteBlog(id)
   message.success('删除成功')
-  initData()
+  getData()
 }
 
 let loading = ref(true)
 let error = ref(false)
 
-function initData() {
-  getNotes()
+function getData() {
+  loading.value = true
+  getAllBlogs()
     .then((data) => {
-      cards.value = handleCards(data)
-      loading.value = false
+      cards.value = data
     })
     .catch((err) => {
-      loading.value = false
       error.value = true
       cards.value = []
       console.log(err)
     })
+    .finally(() => {
+      loading.value = false
+    })
 }
 
-initData()
+getData()
+
+const handleEditModalUpdate = () => {
+  console.log('handleEditModalUpdate')
+  getData()
+}
 
 const columns = createColumns()
 </script>

@@ -3,6 +3,9 @@ import axios, { AxiosRequestConfig } from 'axios'
 const instance = axios.create({
   timeout: 20000,
   baseURL: import.meta.env.VITE_AXIOS_BASEURL,
+  params: {
+    from: 'cms',
+  },
 })
 
 async function request<T>(config: AxiosRequestConfig): Promise<T> {
