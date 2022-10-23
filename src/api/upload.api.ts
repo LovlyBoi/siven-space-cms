@@ -1,6 +1,9 @@
 import { request } from '@/request'
 
-function uploadMarkdown(data: FormData, headers?: Record<string, string>) {
+export function uploadMarkdown(
+  data: FormData,
+  headers?: Record<string, string>
+) {
   return request<{ id: string[]; msg: string }>({
     url: '/upload/markdown',
     method: 'POST',
@@ -9,7 +12,7 @@ function uploadMarkdown(data: FormData, headers?: Record<string, string>) {
   })
 }
 
-function uploadImage(data: FormData, headers?: Record<string, string>) {
+export function uploadImage(data: FormData, headers?: Record<string, string>) {
   return request<{ url: string[]; msg: string }>({
     url: '/upload/image',
     method: 'POST',
@@ -18,7 +21,7 @@ function uploadImage(data: FormData, headers?: Record<string, string>) {
   })
 }
 
-function deleteImage(url: string) {
+export function deleteImage(url: string) {
   const filename = url.trim().split('/').slice(-1)[0]
   return request({
     method: 'DELETE',
@@ -26,11 +29,9 @@ function deleteImage(url: string) {
   })
 }
 
-function deleteMarkdown(id: string) {
+export function deleteMarkdown(id: string) {
   return request({
     method: 'DELETE',
     url: `/upload/markdown/${id}`,
   })
 }
-
-export { uploadMarkdown, uploadImage, deleteImage, deleteMarkdown }
