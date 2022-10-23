@@ -1,25 +1,24 @@
 import { request } from '@/request'
 import type { Card, Blog, BlogToPost } from '@/types'
 
-function getAllBlogs() {
+export function getAllBlogs() {
   return request<Card[]>({
     method: 'GET',
     url: '/blogs',
   })
 }
 
-function getNotes() {
+export function getNotes() {
   return request<Card[]>({
     method: 'GET',
-    url: '/blogs?from=cms',
+    url: '/blogs',
     params: {
       type: 'note',
-      from: 'cms',
     },
   })
 }
 
-function getEssays() {
+export function getEssays() {
   return request<Card[]>({
     method: 'GET',
     url: '/blogs',
@@ -29,7 +28,7 @@ function getEssays() {
   })
 }
 
-function getBlogById<T = Blog>(id: string, type = '') {
+export function getBlogById<T = Blog>(id: string, type = '') {
   const params: Record<string, string> = {}
   type ? (params.type = type) : null
   return request<T>({
@@ -39,7 +38,7 @@ function getBlogById<T = Blog>(id: string, type = '') {
   })
 }
 
-function publishBlog(blog: BlogToPost) {
+export function publishBlog(blog: BlogToPost) {
   return request({
     method: 'POST',
     url: '/blogs/publish',
@@ -47,14 +46,14 @@ function publishBlog(blog: BlogToPost) {
   })
 }
 
-function deleteBlog(id: string) {
+export function deleteBlog(id: string) {
   return request({
     method: 'DELETE',
     url: `/blogs/${id}`,
   })
 }
 
-function editBlogMarkdown(id: string, content: string) {
+export function editBlogMarkdown(id: string, content: string) {
   return request<string>({
     method: 'POST',
     url: `/blogs/edit/markdown/${id}`,
@@ -64,21 +63,10 @@ function editBlogMarkdown(id: string, content: string) {
   })
 }
 
-function editBlogInfo(newBlogInfo: BlogToPost) {
+export function editBlogInfo(newBlogInfo: BlogToPost) {
   return request<string>({
     method: 'POST',
     url: '/blogs/edit/blog',
     data: newBlogInfo,
   })
-}
-
-export {
-  getAllBlogs,
-  getNotes,
-  getEssays,
-  getBlogById,
-  publishBlog,
-  deleteBlog,
-  editBlogMarkdown,
-  editBlogInfo,
 }

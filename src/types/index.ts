@@ -43,6 +43,11 @@ const mapColor: { [k in TagColor]: string } = {
   green: 'bg-green-400',
 }
 
+export interface PvRecords {
+  date: string
+  pv: number
+}
+
 export { BlogType, mapColor }
 export type {
   Card,
