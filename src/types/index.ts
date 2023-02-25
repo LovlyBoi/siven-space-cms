@@ -48,6 +48,10 @@ export interface PvRecords {
   pv: number
 }
 
+export interface TopNBlog extends Card {
+  readingVolume: number
+}
+
 export { BlogType, mapColor }
 export type {
   Card,

@@ -4,7 +4,8 @@
       <n-dialog-provider>
         <n-layout position="absolute">
           <n-layout-header position="absolute">
-            <div class="w-full bg-slate-300 h-11">Header</div>
+            <!-- <div class="w-full bg-slate-300 h-11">Header</div> -->
+            <head-nav></head-nav>
           </n-layout-header>
           <n-layout-content position="absolute" style="top: 44px" has-sider>
             <MenuBar />
@@ -31,6 +32,7 @@ import {
   NDialogProvider,
 } from 'naive-ui'
 import MenuBar from '@/components/SideBar/menu.vue'
+import HeadNav from '@/components/Header/HeadNav.vue'
 </script>
 
 <style lang="ts" scoped></style>

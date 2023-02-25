@@ -1,5 +1,5 @@
 import { request } from '@/request'
-import type { Card, Blog, BlogToPost } from '@/types'
+import type { Card, Blog, BlogToPost, TopNBlog } from '@/types'
 
 export function getAllBlogs() {
   return request<Card[]>({
@@ -68,5 +68,15 @@ export function editBlogInfo(newBlogInfo: BlogToPost) {
     method: 'POST',
     url: '/blogs/edit/blog',
     data: newBlogInfo,
+  })
+}
+
+export function getTopNBlogs(n: number) {
+  return request<TopNBlog[]>({
+    method: 'GET',
+    url: '/blogs/top/readingVolume',
+    params: {
+      n,
+    },
   })
 }

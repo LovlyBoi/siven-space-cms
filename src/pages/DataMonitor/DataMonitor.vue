@@ -1,16 +1,21 @@
 <template>
   <div class="p-4">
-    <NCard title="周访问量">
-      <div id="weekly-pv-wrapper" style="height: 300px"></div>
-    </NCard>
+    <NSpace vertical>
+      <NCard title="过去一周的网站访问量">
+        <div id="weekly-pv-wrapper" style="height: 300px"></div>
+      </NCard>
+      <NCard title="博客访问量 Top10">
+        <div id="top-n-blogs-wrapper" style="height: 300px"></div>
+      </NCard>
+    </NSpace>
   </div>
 </template>
 
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import { NCard } from 'naive-ui'
+import { NCard, NSpace } from 'naive-ui'
 import dayjs from '@/utils/day'
-import { getPv } from '@/api'
+import { getPv, getTopNBlogs } from '@/api'
 import { pvArrFormater } from './utils'
 import type { PvRecords } from '@/types'
 import * as echarts from 'echarts/core'
@@ -62,36 +67,39 @@ echarts.use([
   CanvasRenderer,
 ])
 
-const startDate = dayjs().subtract(6, 'day').format('YYYY-MM-DD')
-const endDate = dayjs().format('YYYY-MM-DD')
-let formatedRecords: PvRecords[] = []
+const chartColor = ['#10B981', '#3B82F6', '#EC4899', '#F59E0B', '#EF4444']
+
+const startDate = dayjs().subtract(7, 'day').format('YYYY-MM-DD')
+const endDate = dayjs().subtract(1, 'day').format('YYYY-MM-DD')
+let formatedPvRecords: PvRecords[] = []
 
 let weeklyPvChartOptions: ECOption = {}
 let weeklyPvChart: echarts.ECharts
 
+let topNBlogsChartOptions: ECOption = {}
+let topNBlogsChart: echarts.ECharts
+
 getPv(startDate, endDate)
   .then((records) => {
-    console.log(records)
-    formatedRecords = pvArrFormater(records, startDate, endDate)
-    console.log(formatedRecords)
+    formatedPvRecords = pvArrFormater(records, startDate, endDate)
     weeklyPvChartOptions = {
       xAxis: {
         type: 'category',
-        data: formatedRecords.map((item) => dayjs(item.date).format('MM/DD')),
+        data: formatedPvRecords.map((item) => dayjs(item.date).format('MM/DD')),
       },
       yAxis: {
         type: 'value',
       },
       series: [
         {
-          data: formatedRecords.map((item) => item.pv),
+          data: formatedPvRecords.map((item) => item.pv),
           type: 'line',
         },
       ],
       tooltip: {
         show: true,
       },
-      color: ['#10B981', '#3B82F6', '#EC4899', '#F59E0B', '#EF4444'],
+      color: chartColor,
     }
     weeklyPvChart.setOption(weeklyPvChartOptions)
   })
@@ -99,11 +107,47 @@ getPv(startDate, endDate)
     console.log(e)
   })
 
+getTopNBlogs(5)
+  .then((blogs) => {
+    topNBlogsChartOptions = {
+      xAxis: {
+        data: blogs.map((blog) => blog.title),
+        axisLabel: {
+          formatter(value: string, index: number) {
+            const maxLen = 5
+            return value.length < maxLen
+              ? value
+              : value.slice(0, maxLen) + '...'
+          },
+        },
+      },
+      yAxis: {},
+      series: [
+        {
+          type: 'bar',
+          data: blogs.map((blog) => blog.readingVolume),
+        },
+      ],
+      tooltip: {
+        show: true,
+      },
+      color: chartColor,
+    }
+    topNBlogsChart.setOption(topNBlogsChartOptions)
+  })
+  .catch((e) => {
+    console.log(e)
+  })
+
 onMounted(() => {
   const weeklyPvWrapper = document.getElementById('weekly-pv-wrapper')
+  const topNBlogsWrapper = document.getElementById('top-n-blogs-wrapper')
   if (!weeklyPvWrapper) return
   weeklyPvChart = echarts.init(weeklyPvWrapper)
-  window.onresize = () => weeklyPvChart.resize()
+  window.addEventListener('resize', () => weeklyPvChart.resize())
+  if (!topNBlogsWrapper) return
+  topNBlogsChart = echarts.init(topNBlogsWrapper)
+  window.addEventListener('resize', () => topNBlogsChart.resize())
 })
 </script>
 

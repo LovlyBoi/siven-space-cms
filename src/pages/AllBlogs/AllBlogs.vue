@@ -105,6 +105,13 @@ const createColumns = (): DataTableColumns<Card> => {
     {
       title: '标题',
       key: 'title',
+      render({ id, title }) {
+        return h(
+          'a',
+          { href: `${import.meta.env.VITE_APP_LOCATION}/article/${id}` },
+          title
+        )
+      },
     },
     {
       title: '作者',
