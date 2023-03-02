@@ -58,7 +58,9 @@
             @file-error="handleImageUploadError"
             @file-remove="handleImageRemove"
           >
-            点击上传
+            <n-icon size="48" :depth="3">
+              <AddOutlineIcon />
+            </n-icon>
           </FileUploader>
         </n-form-item>
         <n-form-item label="上传文章（md 文件）">
@@ -79,8 +81,7 @@
                 点击或者拖动文件到该区域来上传
               </n-text>
               <n-p depth="3" style="margin: 8px 0 0 0">
-                请不要上传个人敏感信息，比如家里有几套房，存款几位数，以防作者抱大腿
-                ^_^
+                请不要上传个人敏感信息。
               </n-p>
             </n-upload-dragger>
           </FileUploader>
@@ -115,6 +116,7 @@ import type { FormInst } from 'naive-ui'
 import {
   CloudUploadOutline as CloudUploadIcon,
   PaperPlaneOutline as PaperPlaneIcon,
+  AddOutline as AddOutlineIcon,
 } from '@vicons/ionicons5'
 import FileUploader from '@/components/FileUploader.vue'
 import { typeOptions, tagColorOptions } from './options'
@@ -130,7 +132,7 @@ const formValue = ref<BlogToPost>({
   id: '',
   title: '',
   author: '',
-  type: BlogType.note,
+  type: BlogType.staple,
   tag: {
     name: '',
     color: 'indigo',
@@ -200,7 +202,7 @@ const handleSubmit = async () => {
       id: '',
       title: '',
       author: '',
-      type: BlogType.note,
+      type: BlogType.staple,
       tag: {
         name: '',
         color: 'indigo',

@@ -9,6 +9,7 @@ import {
   FileTrayStackedOutline as FileTrayStackedIcon,
   AddCircleOutline as AddCircleIcon,
   FingerPrintOutline as FingerPrintIcon,
+  PaperPlane as PaperPlaneIcon,
 } from '@vicons/ionicons5'
 
 function renderIcon(icon: Component) {
@@ -17,7 +18,7 @@ function renderIcon(icon: Component) {
 
 export const menuOptions: MenuOption[] = [
   {
-    label: '博客',
+    label: '文章',
     key: '/blogs',
     icon: renderIcon(FileTrayStackedIcon),
     children: [
@@ -28,7 +29,7 @@ export const menuOptions: MenuOption[] = [
             {
               to: '/blogs/all-blogs',
             },
-            { default: () => '所有博客' }
+            { default: () => '所有文章' }
           ),
         key: '/blogs/all-blogs',
         icon: renderIcon(DocumentTextIcon),
@@ -40,10 +41,22 @@ export const menuOptions: MenuOption[] = [
             {
               to: '/blogs/publish-blog',
             },
-            { default: () => '发布博客' }
+            { default: () => '上传文章' }
           ),
         key: '/blogs/publish-blog',
         icon: renderIcon(AddCircleIcon),
+      },
+      {
+        label: () =>
+          h(
+            RouterLink,
+            {
+              to: '/blogs/creation',
+            },
+            { default: () => '在线创作' }
+          ),
+        key: '/blogs/creation',
+        icon: renderIcon(PaperPlaneIcon),
       },
     ],
   },

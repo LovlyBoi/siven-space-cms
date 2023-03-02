@@ -4,6 +4,7 @@ import type { RouteRecordRaw } from 'vue-router'
 import MainPage from '@/pages/Main.vue'
 import AllBlogsPage from '@/pages/AllBlogs/AllBlogs.vue'
 import PublishBlogPage from '@/pages/PublishBlog/PublishBlog.vue'
+import CreationPage from '@/pages/Creation/Creation.vue'
 import PermissionManagement from '@/pages/PermissionManagement.vue'
 import EditPage from '@/pages/EditPage.vue'
 
@@ -22,6 +23,11 @@ const routes: RouteRecordRaw[] = [
     path: '/blogs/publish-blog',
     name: 'publishBlog',
     component: PublishBlogPage,
+  },
+  {
+    path: '/blogs/creation',
+    name: 'creation',
+    component: CreationPage,
   },
   {
     path: '/blogs/edit-blog/:id',

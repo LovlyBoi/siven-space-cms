@@ -3,12 +3,28 @@ import { BlogType } from '@/types'
 
 export const typeOptions = ref([
   {
-    label: '笔记',
-    value: BlogType.note,
+    label: '肉菜',
+    value: BlogType['meat-dish'],
   },
   {
-    label: '随笔',
-    value: BlogType.essay,
+    label: '素菜',
+    value: BlogType['vegetable-dish'],
+  },
+  {
+    label: '主食',
+    value: BlogType['staple'],
+  },
+  {
+    label: '甜点',
+    value: BlogType['dessert'],
+  },
+  {
+    label: '饮品',
+    value: BlogType['drink'],
+  },
+  {
+    label: '汤',
+    value: BlogType['soup'],
   },
 ])
 

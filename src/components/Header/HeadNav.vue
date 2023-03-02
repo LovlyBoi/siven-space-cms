@@ -3,6 +3,7 @@
     <div class="flex justify-between h-full p-4">
       <div class="flex items-center left-nav">
         <img :src="ViteLogo" alt="vite" />
+        <h1 class="ml-6 text-lg">How To Cook 管理平台</h1>
       </div>
       <div class="flex items-center right-nav">
         <a class="text-center cursor-pointer login-btn">log in</a>

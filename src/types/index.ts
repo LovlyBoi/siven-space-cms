@@ -2,7 +2,7 @@ interface Card {
   id: string
   title: string
   author: string
-  type: BlogType
+  type: keyof typeof BlogType
   tag: { name: string; color: TagColor }
   publishDate: string
   updateDate: string
@@ -13,9 +13,18 @@ type BlogToPost = Omit<Card, 'publishDate' | 'updateDate'>
 
 type TagColor = 'yellow' | 'pink' | 'green' | 'indigo'
 
+// enum BlogType {
+//   'note' = 1,
+//   'essay' = 2,
+// }
+
 enum BlogType {
-  'note' = 1,
-  'essay' = 2,
+  'meat-dish' = 1,
+  'vegetable-dish',
+  'staple',
+  'dessert',
+  'drink',
+  'soup',
 }
 
 interface OutlineItem {
