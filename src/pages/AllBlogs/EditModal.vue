@@ -124,7 +124,7 @@ import {
   useMessage,
 } from 'naive-ui'
 import type { UploadFileInfo } from 'naive-ui'
-import { BlogToPost, BlogType, Card } from '@/types'
+import { BlogToPost, Card } from '@/types'
 import { typeOptions, tagColorOptions } from '../PublishBlog/options'
 import { editBlogInfo } from '@/api'
 
@@ -151,7 +151,7 @@ const defaultFormValue: BlogToPost = {
   id: '',
   title: '',
   author: '',
-  type: BlogType.note,
+  type: 'meat-dish',
   tag: {
     name: '',
     color: 'indigo',

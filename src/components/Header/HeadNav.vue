@@ -6,11 +6,15 @@
         <h1 class="ml-6 text-lg">How To Cook 管理平台</h1>
       </div>
       <div class="flex items-center right-nav">
-        <a class="text-center cursor-pointer login-btn">log in</a>
+        <router-link
+          class="text-center cursor-pointer login-btn"
+          to="/user/login"
+          >log in</router-link
+        >
         <div
           class="px-2 ml-4 text-green-600 border border-green-600 rounded cursor-pointer setup-btn leading-11 hover:text-green-500 hover:border-green-500"
         >
-          <a href="">set up for free</a>
+          <router-link to="/user/register">set up for free</router-link>
         </div>
       </div>
     </div>
@@ -19,7 +23,7 @@
 
 <script setup lang="ts">
 import ViteLogo from '/public/vite.svg'
-import { useMainStore } from '/src/store'
+import { useMainStore } from '@/store'
 
 const mainStore = useMainStore()
 
