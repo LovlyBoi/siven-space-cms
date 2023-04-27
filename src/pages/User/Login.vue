@@ -25,6 +25,7 @@
               <div>
                 <label for="username" class="sr-only">用户名</label>
                 <ValidateInput
+                  ref="usernameInputRef"
                   v-model.trim="username"
                   normal-class="ring-gray-300"
                   error-class="z-10 ring-red-600 focus:ring-red-600 ring-2"
@@ -41,6 +42,7 @@
               <div>
                 <label for="password" class="sr-only">Password</label>
                 <ValidateInput
+                  ref="passwordInputRef"
                   normal-class="ring-gray-300"
                   error-class="z-10 ring-red-600 focus:ring-red-600 ring-2"
                   :rule="passwordRule"
@@ -84,17 +86,41 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import ValidateInput from '@/components/Validater/ValidateInput.vue'
+import { useRouter } from 'vue-router'
+import ValidateInput, {
+  ValidateInputInstance,
+} from '@/components/Validater/ValidateInput.vue'
 import ValidateProvider from '@/components/Validater/ValidateProvider'
+import { useUserStore } from '@/store/user'
+
+const router = useRouter()
+
+const userStore = useUserStore()
 
 const username = ref('')
 const password = ref('')
 
 const validateRef = ref<InstanceType<typeof ValidateProvider>>()
 
-const handleLogin = () => {
-  validateRef.value?.validateAll()
-  console.log('Login: ', username.value, password.value)
+const usernameInputRef = ref<ValidateInputInstance>()
+const passwordInputRef = ref<ValidateInputInstance>()
+
+const handleLogin = async () => {
+  const result = await validateRef.value?.validateAll()
+  if (!result) return
+  userStore
+    .login(username.value, password.value)
+    .then(() => {
+      router.push('/blogs/all-blogs')
+    })
+    .catch((errMsg) => {
+      console.error(errMsg)
+      if (errMsg === '密码错误') {
+        passwordInputRef.value?.shake(errMsg)
+      } else if (errMsg === '该用户尚未注册') {
+        usernameInputRef.value?.shake(errMsg)
+      }
+    })
 }
 
 const usernameRule = (value: string) => {

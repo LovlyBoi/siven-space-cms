@@ -25,6 +25,7 @@
               <div>
                 <label for="username" class="sr-only">用户名</label>
                 <ValidateInput
+                  ref="usernameInputRef"
                   v-model.trim="username"
                   :rule="usernameRule"
                   normal-class="ring-gray-300"
@@ -88,8 +89,16 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useUserStore } from '@/store/user'
 import ValidateProvider from '@/components/Validater/ValidateProvider'
-import ValidateInput from '@/components/Validater/ValidateInput.vue'
+import ValidateInput, {
+  ValidateInputInstance,
+} from '@/components/Validater/ValidateInput.vue'
+
+const router = useRouter()
+
+const userStore = useUserStore()
 
 const username = ref('')
 const password = ref('')
@@ -97,9 +106,23 @@ const passwordAgain = ref('')
 
 const validateRef = ref<InstanceType<typeof ValidateProvider>>()
 
+const usernameInputRef = ref<ValidateInputInstance>()
+
 const handleRegister = async () => {
   if (!validateRef.value) return
   const result = await validateRef.value.validateAll()
+  if (!result) return
+  userStore
+    .register(username.value, password.value)
+    .then(() => {
+      router.push('/blogs/all-blogs')
+    })
+    .catch((errMsg) => {
+      console.error(errMsg)
+      if (errMsg === '该用户名已被占用') {
+        usernameInputRef.value?.shake(errMsg)
+      }
+    })
   console.log('Register', result)
 }
 

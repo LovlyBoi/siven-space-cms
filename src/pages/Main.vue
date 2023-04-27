@@ -1,6 +1,6 @@
 <template>
   <div class="p-4">
-    <NCard> {{ dailyGreeting }}，管理员。 </NCard>
+    <NCard> {{ dailyGreeting }}。 </NCard>
   </div>
 </template>
 

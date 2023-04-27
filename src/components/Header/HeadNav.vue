@@ -5,7 +5,7 @@
         <img :src="ViteLogo" alt="vite" />
         <h1 class="ml-6 text-lg">How To Cook 管理平台</h1>
       </div>
-      <div class="flex items-center right-nav">
+      <div class="flex items-center right-nav" v-if="!userStore.isLogin">
         <router-link
           class="text-center cursor-pointer login-btn"
           to="/user/login"
@@ -17,17 +17,61 @@
           <router-link to="/user/register">set up for free</router-link>
         </div>
       </div>
+      <div class="flex items-center pr-8" v-else>
+        <NDropdown :options="dropdownOptions">
+          <NAvatar>{{ userStore.userInfo?.userName }}</NAvatar>
+        </NDropdown>
+      </div>
     </div>
   </header>
 </template>
 
 <script setup lang="ts">
+import { h } from 'vue'
+import type { Component } from 'vue'
+import { NAvatar, NDropdown, NIcon } from 'naive-ui'
 import ViteLogo from '/public/vite.svg'
-import { useMainStore } from '@/store'
+import {
+  PersonCircleOutline as UserIcon,
+  Pencil as EditIcon,
+  LogOutOutline as LogoutIcon,
+} from '@vicons/ionicons5'
+import { useUserStore } from '@/store/user'
 
-const mainStore = useMainStore()
+const userStore = useUserStore()
 
-// console.log(mainStore.isLogin)
+const handleLogout = () => {
+  userStore.logout()
+}
+
+const renderIcon = (icon: Component) => {
+  return () => {
+    return h(NIcon, null, {
+      default: () => h(icon),
+    })
+  }
+}
+
+const dropdownOptions = [
+  {
+    label: '用户资料',
+    key: 'profile',
+    icon: renderIcon(UserIcon),
+  },
+  {
+    label: '编辑用户资料',
+    key: 'editProfile',
+    icon: renderIcon(EditIcon),
+  },
+  {
+    label: '退出登录',
+    key: 'logout',
+    icon: renderIcon(LogoutIcon),
+    props: {
+      onClick: handleLogout,
+    },
+  },
+]
 </script>
 
 <style lang="less" scoped></style>

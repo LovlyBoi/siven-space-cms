@@ -19,7 +19,7 @@ type validateInfo = {
 
 export type ValidateInputInstance = ComponentPublicInstance<
   Record<string, never>,
-  { validate(): boolean; shake(): void }
+  { validate(): boolean; shake(msg?: string): void }
 >
 
 export default defineComponent({
@@ -116,9 +116,17 @@ export default defineComponent({
       },
     })
 
+    const shake = (msg = '') => {
+      isValid.value = false
+      errorMsg.value = msg
+      nextTick(() => {
+        animationTrigger()
+      })
+    }
+
     expose({
       validate: validInputValue,
-      shake: animationTrigger,
+      shake,
     })
 
     return () =>

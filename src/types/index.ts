@@ -61,6 +61,18 @@ export interface TopNBlog extends Card {
   readingVolume: number
 }
 
+export interface Tokens {
+  accessToken: string
+  refreshToken: string
+}
+
+export interface UserInfo {
+  id: string
+  userName: string
+  role: 1 | 2
+  avatar: string
+}
+
 export { BlogType, mapColor }
 export type {
   Card,

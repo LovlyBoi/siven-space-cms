@@ -4,7 +4,6 @@
       <n-dialog-provider>
         <n-layout position="absolute">
           <n-layout-header position="absolute">
-            <!-- <div class="w-full bg-slate-300 h-11">Header</div> -->
             <head-nav></head-nav>
           </n-layout-header>
           <n-layout-content position="absolute" style="top: 44px" has-sider>
@@ -33,6 +32,26 @@ import {
 } from 'naive-ui'
 import MenuBar from '@/components/SideBar/menu.vue'
 import HeadNav from '@/components/Header/HeadNav.vue'
-</script>
+import { useUserStore } from '@/store/user'
+import { useRouter } from 'vue-router'
+import { useToast } from 'vue-toast-notification'
 
-<style lang="ts" scoped></style>
+const router = useRouter()
+
+const userStore = useUserStore()
+
+const toast = useToast({
+  position: 'top-right',
+  pauseOnHover: true,
+})
+
+userStore
+  .restoreLoginState()
+  .then(() => {
+    router.push('/blogs/all-blogs')
+  })
+  .catch((err) => {
+    console.warn('自动登录失败', err)
+    toast.info('登录过期')
+  })
+</script>

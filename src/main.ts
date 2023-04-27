@@ -8,5 +8,10 @@ import 'mavon-editor/dist/css/index.css'
 import App from './App.vue'
 import router from '@/router'
 import { createPinia } from 'pinia'
+import '@/assets/toast-theme-suger.css'
 
-createApp(App).use(router).use(mavonEditor).use(createPinia()).mount('#app')
+const app = createApp(App)
+app.use(router)
+app.use(mavonEditor)
+app.use(createPinia())
+app.mount('#app')
