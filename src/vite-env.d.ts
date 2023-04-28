@@ -9,3 +9,7 @@ declare module '*.vue' {
 interface ImportMetaEnv {
   readonly VITE_AXIOS_BASEURL: undefined | string
 }
+
+declare interface Window {
+  $message: MessageApiInjection
+}

@@ -14,6 +14,7 @@ import type { Tokens, UserInfo } from '@/types'
 export const useUserStore = defineStore('userStore', {
   state() {
     const isLogin = ref(false)
+    const isRestoring = ref(true)
     const userInfo = ref<UserInfo>()
 
     const router = useRouter()
@@ -64,6 +65,7 @@ export const useUserStore = defineStore('userStore', {
     }
 
     function restoreLoginState() {
+      isRestoring.value = true
       return new Promise<void>((resolve, reject) => {
         let t: Tokens
         initLoginState()
@@ -82,6 +84,9 @@ export const useUserStore = defineStore('userStore', {
           })
           .catch((err) => {
             reject(err)
+          })
+          .finally(() => {
+            isRestoring.value = false
           })
       })
     }
@@ -138,7 +143,7 @@ export const useUserStore = defineStore('userStore', {
       setCache('user_token', '')
       setCache('user_info', '')
       setLoginState(false)
-      router.push('/')
+      router.push('/user/login')
     }
 
     return {
@@ -149,6 +154,8 @@ export const useUserStore = defineStore('userStore', {
       register,
       logout,
       restoreLoginState,
+      // 该状态用于阻塞初次进入页面时vue-router的鉴权
+      isRestoring,
     }
   },
 })

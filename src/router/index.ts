@@ -2,7 +2,7 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
 
 import { useUserStore } from '@/store/user'
-import { useToast } from 'vue-toast-notification'
+// import { useToast } from 'vue-toast-notification'
 
 import MainPage from '@/pages/Main.vue'
 import AllBlogsPage from '@/pages/AllBlogs/AllBlogs.vue'
@@ -82,10 +82,8 @@ router.beforeEach((to) => {
     }
   } else if (/^\/blogs/.test(to.fullPath)) {
     if (!userStore.isLogin) {
-      const toast = useToast({
-        position: 'top-right',
-      })
-      toast.info('请先登录')
+      if (userStore.isRestoring) return
+      window.$message.info('请先登录')
       return '/user/login'
     }
   }

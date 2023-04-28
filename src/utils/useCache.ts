@@ -6,6 +6,6 @@ export function getChache<T>(key: string, session = false): T | undefined {
 
 export function setCache<T>(key: string, value: T, session = false) {
   const storage = session ? sessionStorage : localStorage
-  const jsonValue = JSON.stringify(value)
+  const jsonValue = JSON.stringify(typeof value === 'undefined' ? null : value)
   storage.setItem(key, jsonValue)
 }
