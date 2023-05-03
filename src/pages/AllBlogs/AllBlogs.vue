@@ -318,7 +318,7 @@ let error = ref(false)
 function getData() {
   loading.value = true
   getAllBlogs()
-    .then((data) => {
+    .then(({ cards: data }) => {
       cards.value = data
     })
     .catch((err) => {

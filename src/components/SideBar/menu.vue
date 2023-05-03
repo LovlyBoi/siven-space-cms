@@ -23,7 +23,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { NLayoutSider, NMenu } from 'naive-ui'
-import { menuOptions } from './menuList'
+import { getMenuOptions } from './menuList'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
@@ -33,4 +33,6 @@ const currRoutePath = computed(() => route.path)
 const activeKey = currRoutePath
 
 const collapsed = ref(false)
+
+const menuOptions = getMenuOptions()
 </script>

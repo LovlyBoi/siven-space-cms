@@ -2,7 +2,7 @@ import { request } from '@/request'
 import type { Card, Blog, BlogToPost, TopNBlog } from '@/types'
 
 export function getAllBlogs() {
-  return request<Card[]>({
+  return request<{ cards: Card[]; hasNext: boolean }>({
     method: 'GET',
     url: '/blogs',
   })
@@ -32,8 +32,8 @@ export function getBlogById<T = Blog>(id: string, type = '') {
   const params: Record<string, string> = {}
   type ? (params.type = type) : null
   return request<T>({
-    method: 'GET',
-    url: `/blogs/${id}`,
+    method: 'POST',
+    url: `/blogs/article/${id}`,
     params,
   })
 }

@@ -1,5 +1,5 @@
 import { request } from '@/request'
-import { Tokens, UserInfo } from '@/types'
+import { Tokens, UserInfo, UserInfoWithUnuse } from '@/types'
 
 interface LoginResponce {
   isSuccess: boolean
@@ -60,6 +60,16 @@ export function getUserInfoByToken(token: string) {
     url: '/auth/getUserInfo',
     data: {
       token,
+    },
+  })
+}
+
+export function searchUser(idOrName: string) {
+  return request<UserInfoWithUnuse[]>({
+    method: 'GET',
+    url: '/auth/searchUsers',
+    params: {
+      userIdOrName: idOrName,
     },
   })
 }

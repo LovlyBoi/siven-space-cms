@@ -1,4 +1,5 @@
-import { h, Component } from 'vue'
+import { h, Component, effect, ref } from 'vue'
+import { useUserStore } from '@/store/user'
 import { NIcon } from 'naive-ui'
 import type { MenuOption } from 'naive-ui'
 import { RouterLink } from 'vue-router'
@@ -16,72 +17,60 @@ function renderIcon(icon: Component) {
   return () => h(NIcon, null, { default: () => h(icon) })
 }
 
-export const menuOptions: MenuOption[] = [
+function renderChildOption(to: string, title: string, icon: Component) {
+  return {
+    label: () =>
+      h(
+        RouterLink,
+        {
+          to,
+        },
+        { default: () => title }
+      ),
+    key: to,
+    icon: renderIcon(icon),
+  }
+}
+
+export const getMenuOptions = () => {
+  const menu = ref<MenuOption[]>()
+  const userStore = useUserStore()
+  effect(() => {
+    if (userStore.userInfo?.role === 1) {
+      // 博主
+      menu.value = bloggerMenuOptions
+    } else if (userStore.userInfo?.role === 2) {
+      // 管理员
+      menu.value = managerMenuOptions
+    }
+  })
+  return menu
+}
+
+const managerMenuOptions: MenuOption[] = [
   {
     label: '文章',
     key: '/blogs',
     icon: renderIcon(FileTrayStackedIcon),
     children: [
-      {
-        label: () =>
-          h(
-            RouterLink,
-            {
-              to: '/blogs/all-blogs',
-            },
-            { default: () => '所有文章' }
-          ),
-        key: '/blogs/all-blogs',
-        icon: renderIcon(DocumentTextIcon),
-      },
-      {
-        label: () =>
-          h(
-            RouterLink,
-            {
-              to: '/blogs/publish-blog',
-            },
-            { default: () => '上传文章' }
-          ),
-        key: '/blogs/publish-blog',
-        icon: renderIcon(AddCircleIcon),
-      },
-      {
-        label: () =>
-          h(
-            RouterLink,
-            {
-              to: '/blogs/creation',
-            },
-            { default: () => '在线创作' }
-          ),
-        key: '/blogs/creation',
-        icon: renderIcon(PaperPlaneIcon),
-      },
+      renderChildOption('/blogs/all-blogs', '所有文章', DocumentTextIcon),
+      renderChildOption('/blogs/publish-blog', '上传文章', AddCircleIcon),
+      renderChildOption('/blogs/creation', '在线创作', PaperPlaneIcon),
     ],
   },
+  renderChildOption('/data-monitor', '数据监控', PodiumIcon),
+  renderChildOption('/permission-management', '权限管理', FingerPrintIcon),
+]
+
+const bloggerMenuOptions: MenuOption[] = [
   {
-    label: () =>
-      h(
-        RouterLink,
-        {
-          to: '/data-monitor',
-        },
-        { default: () => '数据监控' }
-      ),
-    key: '/data-monitor',
-    icon: renderIcon(PodiumIcon),
-  },
-  {
-    label: () =>
-      h(
-        RouterLink,
-        {
-          to: '/permission-management',
-        },
-        { default: () => '权限管理' }
-      ),
-    key: '/permission-management',
-    icon: renderIcon(FingerPrintIcon),
+    label: '文章',
+    key: '/blogs',
+    icon: renderIcon(FileTrayStackedIcon),
+    children: [
+      renderChildOption('/blogs/all-blogs', '所有文章', DocumentTextIcon),
+      renderChildOption('/blogs/publish-blog', '上传文章', AddCircleIcon),
+      renderChildOption('/blogs/creation', '在线创作', PaperPlaneIcon),
+    ],
   },
 ]

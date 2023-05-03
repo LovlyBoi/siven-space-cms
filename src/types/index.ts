@@ -73,6 +73,8 @@ export interface UserInfo {
   avatar: string
 }
 
+export type UserInfoWithUnuse = UserInfo & { unuse: 0 | 1 }
+
 export { BlogType, mapColor }
 export type {
   Card,
