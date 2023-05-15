@@ -73,3 +73,19 @@ export function searchUser(idOrName: string) {
     },
   })
 }
+
+export function updateUserRole(
+  userId: string,
+  oldRole: 1 | 2 | 3,
+  newRole: 1 | 2 | 3
+) {
+  return request({
+    method: 'POST',
+    url: '/auth/updateUserRole',
+    data: {
+      userId,
+      oldRole,
+      newRole,
+    },
+  })
+}

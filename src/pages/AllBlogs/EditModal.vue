@@ -11,7 +11,7 @@
       aria-modal="true"
     >
       <n-form ref="formRef" :label-width="80" :model="formValue">
-        <n-form-item label="作者">
+        <!-- <n-form-item label="作者">
           <n-input
             placeholder="author"
             :maxlength="15"
@@ -21,7 +21,7 @@
             show-count
             style="width: 300px"
           />
-        </n-form-item>
+        </n-form-item> -->
         <n-form-item label="标题">
           <n-input
             placeholder="title"
@@ -125,8 +125,11 @@ import {
 } from 'naive-ui'
 import type { UploadFileInfo } from 'naive-ui'
 import { BlogToPost, Card } from '@/types'
+import { useUserStore } from '@/store/user'
 import { typeOptions, tagColorOptions } from '../PublishBlog/options'
 import { editBlogInfo } from '@/api'
+
+const userStore = useUserStore()
 
 const emit = defineEmits(['update:modelValue', 'update'])
 
@@ -150,7 +153,7 @@ const deepClone = <T extends object>(obj: T): T =>
 const defaultFormValue: BlogToPost = {
   id: '',
   title: '',
-  author: '',
+  author: userStore.userInfo?.id || '',
   type: 'meat-dish',
   tag: {
     name: '',

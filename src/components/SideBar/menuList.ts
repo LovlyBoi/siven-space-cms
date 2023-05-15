@@ -6,6 +6,7 @@ import { RouterLink } from 'vue-router'
 
 import {
   PodiumOutline as PodiumIcon,
+  FilterOutline as FilterOutlineIcon,
   DocumentTextOutline as DocumentTextIcon,
   FileTrayStackedOutline as FileTrayStackedIcon,
   AddCircleOutline as AddCircleIcon,
@@ -39,7 +40,10 @@ export const getMenuOptions = () => {
     if (userStore.userInfo?.role === 1) {
       // 博主
       menu.value = bloggerMenuOptions
-    } else if (userStore.userInfo?.role === 2) {
+    } else if (
+      userStore.userInfo?.role === 2 ||
+      userStore.userInfo?.role === 3
+    ) {
       // 管理员
       menu.value = managerMenuOptions
     }
@@ -53,6 +57,7 @@ const managerMenuOptions: MenuOption[] = [
     key: '/blogs',
     icon: renderIcon(FileTrayStackedIcon),
     children: [
+      renderChildOption('/blogs/audit-blogs', '审核文章', FilterOutlineIcon),
       renderChildOption('/blogs/all-blogs', '所有文章', DocumentTextIcon),
       renderChildOption('/blogs/publish-blog', '上传文章', AddCircleIcon),
       renderChildOption('/blogs/creation', '在线创作', PaperPlaneIcon),

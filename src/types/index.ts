@@ -9,6 +9,11 @@ interface Card {
   pictures: string[]
 }
 
+interface CardWithAudit extends Card {
+  audit: 0 | 1 | 2
+  auditMsg?: string
+}
+
 type BlogToPost = Omit<Card, 'publishDate' | 'updateDate'>
 
 type TagColor = 'yellow' | 'pink' | 'green' | 'indigo'
@@ -69,7 +74,7 @@ export interface Tokens {
 export interface UserInfo {
   id: string
   userName: string
-  role: 1 | 2
+  role: 1 | 2 | 3
   avatar: string
 }
 
@@ -78,6 +83,7 @@ export type UserInfoWithUnuse = UserInfo & { unuse: 0 | 1 }
 export { BlogType, mapColor }
 export type {
   Card,
+  CardWithAudit,
   BlogToPost,
   TagColor,
   OutlineItem,

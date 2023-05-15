@@ -1,6 +1,6 @@
 <template>
   <div class="p-4">
-    <n-card title="所有文章">
+    <n-card title="待审核文章">
       <div v-if="loading">
         <n-skeleton
           style="margin-bottom: 10px"
@@ -39,17 +39,14 @@
         </template>
       </n-empty>
     </n-card>
-    <edit-modal
-      v-model="showModal"
-      :data="rowBlogForEditModal"
-      @update="handleEditModalUpdate"
-    />
+    <NModal v-model:show="showPreview">
+      <Preview :blog-id="currBlogId" @close="() => (showPreview = false)" />
+    </NModal>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, h, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { h, ref } from 'vue'
 import {
   NCard,
   NDataTable,
@@ -58,29 +55,32 @@ import {
   NImage,
   NSpace,
   NImageGroup,
+  NInput,
   NPopover,
   NButton,
   NWatermark,
   useDialog,
   useMessage,
+  NModal,
 } from 'naive-ui'
-import EditModal from './EditModal.vue'
+// import EditModal from './EditModal.vue'
 import type { DataTableColumns } from 'naive-ui'
+import Preview from '../../components/Preview.vue'
 import { BlogType2Ch } from '@/utils/blogTypeToCh'
 import { mapColor, CardWithAudit } from '@/types'
 import dayjs from '@/utils/day'
-import { getBlogsByAuthor, deleteBlog } from '@/api'
+import { useUserStore } from '@/store/user'
+import { getBlogsToBeAudit, auditBlog } from '@/api'
 
 const cards = ref<CardWithAudit[]>()
 
-const router = useRouter()
+const userStore = useUserStore()
 
-const showModal = ref(false)
-
-const message = useMessage()
 const dialog = useDialog()
 
-const rowBlogForEditModal = ref<CardWithAudit | null>(null)
+const currBlogId = ref('')
+
+const showPreview = ref(false)
 
 const mapAuditState = ['已通过', '审核中', '未通过审核']
 
@@ -108,7 +108,12 @@ const createColumns = (): DataTableColumns<CardWithAudit> => {
       render({ id, title }) {
         return h(
           'a',
-          { href: `${import.meta.env.VITE_APP_LOCATION}/article/${id}` },
+          {
+            href: 'javascript:;',
+            onClick: () => {
+              showPreviewModal(id)
+            },
+          },
           title
         )
       },
@@ -142,35 +147,18 @@ const createColumns = (): DataTableColumns<CardWithAudit> => {
     {
       title: '状态',
       key: 'audit',
-      render({ audit, auditMsg }) {
-        return audit === 2
-          ? h(
-              NPopover,
-              {
-                trigger: 'hover',
-              },
-              {
-                default: () => h('span', {}, auditMsg),
-                trigger: () =>
-                  h(
-                    'span',
-                    {
-                      class: 'text-red-500',
-                    },
-                    [mapAuditState[audit]]
-                  ),
-              }
-            )
-          : h(
-              'span',
-              {
-                class: {
-                  'text-green-600': audit === 0,
-                  'text-yellow-500': audit === 1,
-                },
-              },
-              [mapAuditState[audit]]
-            )
+      render({ audit }) {
+        return h(
+          'span',
+          {
+            class: {
+              'text-green-600': audit === 0,
+              'text-yellow-500': audit === 1,
+              'text-red-500': audit === 2,
+            },
+          },
+          [mapAuditState[audit]]
+        )
       },
     },
     {
@@ -251,40 +239,26 @@ const createColumns = (): DataTableColumns<CardWithAudit> => {
                 NButton,
                 {
                   text: true,
+                  type: 'primary',
                   onClick: () => {
-                    router.push(`/blogs/edit-blog/${row.id}`)
+                    handleConfirmAccessAudit(row)
                   },
                 },
                 {
-                  default: () => '在线修改',
+                  default: () => '通过',
                 }
               ),
               h(
                 NButton,
                 {
                   text: true,
+                  type: 'warning',
                   onClick: () => {
-                    rowBlogForEditModal.value = row
-                    showModal.value = true
-                  },
-                  // onClick: () => {
-                  //   router.push(`/blogs/edit-blog/${row.id}`)
-                  // },
-                },
-                {
-                  default: () => '编辑',
-                }
-              ),
-              h(
-                NButton,
-                {
-                  text: true,
-                  onClick: () => {
-                    handleRemoveConfirm(row)
+                    handleNoAccessAuditConfirm(row)
                   },
                 },
                 {
-                  default: () => '删除',
+                  default: () => '不通过',
                 }
               ),
             ],
@@ -295,10 +269,10 @@ const createColumns = (): DataTableColumns<CardWithAudit> => {
   ]
 }
 
-const handleRemoveConfirm = (row: CardWithAudit) => {
-  dialog.warning({
-    title: '删除',
-    content: `你确定删除 [${row.title}] 这篇博客？`,
+const handleConfirmAccessAudit = (row: CardWithAudit) => {
+  dialog.info({
+    title: '确认审核通过',
+    content: '确定通过该文章的审核吗？',
     maskClosable: false,
     action: () =>
       h(
@@ -316,7 +290,7 @@ const handleRemoveConfirm = (row: CardWithAudit) => {
                 onClick: () => dialog.destroyAll(),
               },
               {
-                default: () => '别，我想想',
+                default: () => '取消',
               }
             ),
             h(
@@ -324,7 +298,10 @@ const handleRemoveConfirm = (row: CardWithAudit) => {
               {
                 quaternary: true,
                 type: 'warning',
-                onClick: () => (handleRemove(row), dialog.destroyAll()),
+                onClick: () => {
+                  accessAudit(row.id)
+                  dialog.destroyAll()
+                },
               },
               {
                 default: () => '确定',
@@ -336,11 +313,81 @@ const handleRemoveConfirm = (row: CardWithAudit) => {
   })
 }
 
-const handleRemove = async ({ id }: CardWithAudit) => {
-  console.log(id, 'delete')
-  await deleteBlog(id)
-  message.success('删除成功')
-  getData()
+const accessAudit = (blogId: string) => {
+  auditBlog(blogId, 0).then(() => {
+    getData()
+  })
+}
+
+const noAccessAudit = (blogId: string, msg: string) => {
+  auditBlog(blogId, 2, msg).then(() => {
+    getData()
+  })
+}
+
+const showPreviewModal = (blogId: string) => {
+  currBlogId.value = blogId
+  showPreview.value = true
+}
+
+const noAccessReason = ref('由于xxx原因，导致您的文章审核未通过。')
+
+const handleNoAccessAuditConfirm = (row: CardWithAudit) => {
+  dialog.info({
+    title: '不通过原因',
+    content: () => {
+      return h('div', {}, [
+        h('p', { class: 'my-3' }, '请输入该文章不通过的原因'),
+        h(NInput, {
+          type: 'textarea',
+          autosize: {
+            minRows: 3,
+            maxRows: 5,
+          },
+          value: noAccessReason.value,
+          onInput: (v) => (noAccessReason.value = v),
+        }),
+      ])
+    },
+    maskClosable: false,
+    action: () =>
+      h(
+        NSpace,
+        {
+          align: 'center',
+        },
+        {
+          default: () => [
+            h(
+              NButton,
+              {
+                text: true,
+                size: 'tiny',
+                onClick: () => dialog.destroyAll(),
+              },
+              {
+                default: () => '取消',
+              }
+            ),
+            h(
+              NButton,
+              {
+                quaternary: true,
+                type: 'warning',
+                onClick: () => {
+                  noAccessAudit(row.id, noAccessReason.value)
+                  dialog.destroyAll()
+                  noAccessReason.value = ''
+                },
+              },
+              {
+                default: () => '确定',
+              }
+            ),
+          ],
+        }
+      ),
+  })
 }
 
 let loading = ref(true)
@@ -348,7 +395,7 @@ let error = ref(false)
 
 function getData() {
   loading.value = true
-  getBlogsByAuthor()
+  getBlogsToBeAudit()
     .then(({ cards: data }) => {
       cards.value = data
     })
@@ -363,11 +410,6 @@ function getData() {
 }
 
 getData()
-
-const handleEditModalUpdate = () => {
-  console.log('handleEditModalUpdate')
-  getData()
-}
 
 const columns = createColumns()
 </script>

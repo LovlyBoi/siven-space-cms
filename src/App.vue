@@ -8,7 +8,7 @@
         <n-layout-content position="absolute" style="top: 44px" has-sider>
           <MenuBar />
           <n-layout-content>
-            <RouterView v-slot="{ Component }">
+            <RouterView v-slot="{ Component }" :key="userStore.userInfo?.id">
               <keep-alive exclude="EditPage">
                 <component :is="Component" />
               </keep-alive>

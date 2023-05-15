@@ -1,8 +1,8 @@
 <template>
   <div class="p-4">
-    <n-card title="发布博客">
+    <n-card title="发布文章">
       <n-form ref="formRef" :label-width="80" :model="formValue">
-        <n-form-item label="作者">
+        <!-- <n-form-item label="作者">
           <n-input
             placeholder="author"
             :maxlength="15"
@@ -12,7 +12,7 @@
             show-count
             style="width: 300px"
           />
-        </n-form-item>
+        </n-form-item> -->
         <n-form-item label="标题">
           <n-input
             placeholder="title"
@@ -98,7 +98,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watchEffect } from 'vue'
 import {
   NCard,
   NForm,
@@ -122,7 +122,10 @@ import FileUploader from '@/components/FileUploader.vue'
 import { typeOptions, tagColorOptions } from './options'
 import { publishBlog } from '@/api'
 import { BlogToPost, BlogType } from '@/types'
+import { useUserStore } from '@/store/user'
 import { FileInfo } from 'naive-ui/es/upload/src/interface'
+
+const userStore = useUserStore()
 
 const message = useMessage()
 
@@ -131,13 +134,17 @@ const formRef = ref<FormInst>()
 const formValue = ref<BlogToPost>({
   id: '',
   title: '',
-  author: '',
+  author: userStore.userInfo?.id || '',
   type: BlogType.staple,
   tag: {
     name: '',
     color: 'indigo',
   },
   pictures: [],
+})
+
+watchEffect(() => {
+  formValue.value.author = userStore.userInfo?.id || ''
 })
 
 const imageUploaderRef = ref<InstanceType<typeof FileUploader>>()
@@ -201,7 +208,7 @@ const handleSubmit = async () => {
     Object.assign(formValue.value, {
       id: '',
       title: '',
-      author: '',
+      author: userStore.userInfo?.id || '',
       type: BlogType.staple,
       tag: {
         name: '',

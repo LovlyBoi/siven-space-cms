@@ -32,7 +32,7 @@ const currRoutePath = computed(() => route.path)
 
 const activeKey = currRoutePath
 
-const collapsed = ref(false)
+const collapsed = ref(true)
 
 const menuOptions = getMenuOptions()
 </script>

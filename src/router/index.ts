@@ -6,6 +6,7 @@ import { useUserStore } from '@/store/user'
 
 import MainPage from '@/pages/Main.vue'
 import AllBlogsPage from '@/pages/AllBlogs/AllBlogs.vue'
+import AuditBlogsPage from '@/pages/AuditBlogs/AuditBlogs.vue'
 import PublishBlogPage from '@/pages/PublishBlog/PublishBlog.vue'
 import CreationPage from '@/pages/Creation/Creation.vue'
 import PermissionManagement from '@/pages/PermissionManagement.vue'
@@ -24,6 +25,17 @@ const routes: RouteRecordRaw[] = [
     path: '/blogs/all-blogs',
     name: 'allBlogs',
     component: AllBlogsPage,
+    props: () => {
+      const userStore = useUserStore()
+      return {
+        key: userStore.userInfo?.id,
+      }
+    },
+  },
+  {
+    path: '/blogs/audit-blogs',
+    name: 'auditBlogs',
+    component: AuditBlogsPage,
   },
   {
     path: '/blogs/publish-blog',

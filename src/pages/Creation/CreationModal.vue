@@ -11,7 +11,7 @@
       aria-modal="true"
     >
       <n-form ref="formRef" :label-width="80" :model="formValue">
-        <n-form-item label="作者">
+        <!-- <n-form-item label="作者">
           <n-input
             placeholder="author"
             :maxlength="15"
@@ -21,7 +21,7 @@
             show-count
             style="width: 300px"
           />
-        </n-form-item>
+        </n-form-item> -->
         <n-form-item label="标题">
           <n-input
             placeholder="title"
@@ -84,7 +84,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, toRaw } from 'vue'
+import { ref, computed, toRaw, PropType } from 'vue'
 import {
   NModal,
   NCard,
@@ -96,14 +96,20 @@ import {
   useMessage,
 } from 'naive-ui'
 import { BlogToPost, BlogType } from '@/types'
+import { useUserStore } from '@/store/user'
 import { typeOptions, tagColorOptions } from '../PublishBlog/options'
-import { editBlogInfo } from '@/api'
+import { publishBlog, uploadMarkdown } from '@/api'
+
+const userStore = useUserStore()
 
 const emit = defineEmits(['update:modelValue', 'update'])
 
 const props = defineProps({
   modelValue: {
     type: Boolean,
+  },
+  formData: {
+    type: Object as PropType<FormData>,
   },
 })
 
@@ -114,7 +120,7 @@ const submiting = ref(false)
 const formValue = ref<BlogToPost>({
   id: '',
   title: '',
-  author: '',
+  author: userStore.userInfo?.id || '',
   type: BlogType.staple,
   tag: {
     name: '',
@@ -131,11 +137,17 @@ const showModal = computed({
 const handleClose = () => (showModal.value = false)
 
 const handleSubmit = async () => {
+  if (!props.formData) return
   submiting.value = true
+  const fd = props.formData
+  const {
+    id: [blogId],
+  } = await uploadMarkdown(fd)
+  formValue.value.id = blogId
   const newBlogInfo = toRaw(formValue.value)
   console.log(newBlogInfo)
   try {
-    const result = await editBlogInfo(newBlogInfo)
+    const result = await publishBlog(newBlogInfo)
     message.success(result)
     emit('update')
     handleClose()

@@ -27,7 +27,12 @@
       placeholder="开始你的创作..."
       v-model="userCreation"
     />
-    <creation-modal v-model="showModal"></creation-modal>
+    <creation-modal
+      :key="modalKey"
+      v-model="showModal"
+      :formData="fd"
+      @update="handleBlogPublish"
+    ></creation-modal>
   </div>
 </template>
 
@@ -43,8 +48,21 @@ const showModal = ref(false)
 
 const submiting = ref(false)
 
+const fd = ref<FormData>()
+
+const modalKey = ref(1)
+
 const handleSubmit = () => {
   showModal.value = true
-  console.log('发布', userCreation.value)
+  const file = new Blob([userCreation.value], { type: 'text/markdown' })
+  const formData = new FormData()
+  formData.append('file', file)
+  fd.value = formData
+  console.log('发布', formData)
+}
+
+const handleBlogPublish = () => {
+  modalKey.value += 1
+  userCreation.value = ''
 }
 </script>

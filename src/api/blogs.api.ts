@@ -1,10 +1,24 @@
 import { request } from '@/request'
-import type { Card, Blog, BlogToPost, TopNBlog } from '@/types'
+import type { Card, CardWithAudit, Blog, BlogToPost, TopNBlog } from '@/types'
 
 export function getAllBlogs() {
   return request<{ cards: Card[]; hasNext: boolean }>({
     method: 'GET',
     url: '/blogs',
+  })
+}
+
+export function getBlogsByAuthor() {
+  return request<{ cards: CardWithAudit[]; hasNext: boolean }>({
+    method: 'GET',
+    url: '/blogs/blogsByAuthor',
+  })
+}
+
+export function getBlogsToBeAudit() {
+  return request<{ cards: CardWithAudit[]; hasNext: boolean }>({
+    method: 'GET',
+    url: '/blogs/blogsToBeAudit',
   })
 }
 
@@ -39,7 +53,7 @@ export function getBlogById<T = Blog>(id: string, type = '') {
 }
 
 export function publishBlog(blog: BlogToPost) {
-  return request({
+  return request<string>({
     method: 'POST',
     url: '/blogs/publish',
     data: blog,
@@ -77,6 +91,21 @@ export function getTopNBlogs(n: number) {
     url: '/blogs/top/readingVolume',
     params: {
       n,
+    },
+  })
+}
+
+export function auditBlog(
+  blogId: string,
+  state: 0 | 2,
+  msg: string | undefined = void 0
+) {
+  return request({
+    method: 'POST',
+    url: `/blogs/audit/${blogId}`,
+    data: {
+      state,
+      msg,
     },
   })
 }
