@@ -90,7 +90,7 @@ import { useRouter } from 'vue-router'
 import ValidateInput, {
   ValidateInputInstance,
 } from '@/components/Validater/ValidateInput.vue'
-import ValidateProvider from '@/components/Validater/ValidateProvider'
+import ValidateProvider from '@/components/Validater/ValidateProvider.vue'
 import { useUserStore } from '@/store/user'
 
 const router = useRouter()

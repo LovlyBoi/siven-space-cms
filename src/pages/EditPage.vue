@@ -33,7 +33,7 @@ const blogId = route.params.id as string
 
 getBlogById<string>(blogId, 'markdown')
   .then((markdown) => {
-    BlogMarkdown.value = markdown
+    BlogMarkdown.value = markdown + ''
   })
   .catch((e) => {
     console.log(e)

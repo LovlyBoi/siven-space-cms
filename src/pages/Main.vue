@@ -1,12 +1,17 @@
 <template>
   <div class="p-4">
-    <NCard> {{ dailyGreeting }}。 </NCard>
+    <NCard>
+      {{ dailyGreeting }}{{ `，${userStore.userInfo?.userName}` || '' }}。
+    </NCard>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
 import { NCard } from 'naive-ui'
+import { useUserStore } from '@/store/user'
+
+const userStore = useUserStore()
 
 const dailyGreeting = computed(() => {
   const now = new Date()

@@ -91,7 +91,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/store/user'
-import ValidateProvider from '@/components/Validater/ValidateProvider'
+import ValidateProvider from '@/components/Validater/ValidateProvider.vue'
 import ValidateInput, {
   ValidateInputInstance,
 } from '@/components/Validater/ValidateInput.vue'
@@ -123,7 +123,6 @@ const handleRegister = async () => {
         usernameInputRef.value?.shake(errMsg)
       }
     })
-  console.log('Register', result)
 }
 
 const usernameRule = (value: string) => {

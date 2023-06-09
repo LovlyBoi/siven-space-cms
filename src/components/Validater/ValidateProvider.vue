@@ -1,6 +1,11 @@
+<template>
+  <slot />
+</template>
+
+<script lang="ts">
 import { defineComponent, nextTick } from 'vue'
 
-const ValidateProvider = defineComponent({
+export default defineComponent({
   name: 'ValidateProvider',
   setup(_, { expose }) {
     const fns: (() => boolean)[] = []
@@ -18,7 +23,9 @@ const ValidateProvider = defineComponent({
       validateAll,
     }
   },
-  template: '<slot />',
+  // render() {
+  //   reutrn () => h(Slot)
+  // },
   provide() {
     return {
       mountValidateFuns: (fun: () => boolean) => {
@@ -27,5 +34,4 @@ const ValidateProvider = defineComponent({
     }
   },
 })
-
-export default ValidateProvider
+</script>

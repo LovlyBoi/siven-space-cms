@@ -55,7 +55,8 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/data-monitor',
     name: 'dataMonitor',
-    component: () => import('@/pages/DataMonitor/DataMonitor.vue'),
+    component: () =>
+      import(/*@vitejs/preload*/ '@/pages/DataMonitor/DataMonitor.vue'),
   },
   {
     path: '/permission-management',
