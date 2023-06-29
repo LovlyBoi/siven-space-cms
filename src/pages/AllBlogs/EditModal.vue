@@ -124,9 +124,10 @@ import {
   useMessage,
 } from 'naive-ui'
 import type { UploadFileInfo } from 'naive-ui'
-import { BlogToPost, Card } from '@/types'
+import { BlogToPost, BlogType, Card } from '@/types'
 import { useUserStore } from '@/store/user'
 import { typeOptions, tagColorOptions } from '../PublishBlog/options'
+import { omit } from 'lodash-es'
 import { editBlogInfo } from '@/api'
 
 const userStore = useUserStore()
@@ -154,7 +155,7 @@ const defaultFormValue: BlogToPost = {
   id: '',
   title: '',
   author: userStore.userInfo?.id || '',
-  type: 'meat-dish',
+  type: BlogType['front-end-tec'],
   tag: {
     name: '',
     color: 'indigo',
@@ -178,7 +179,7 @@ const showModal = computed({
     if (!props.modelValue) {
       Object.assign(formValue.value, defaultFormValue)
     } else {
-      Object.assign(formValue.value, props.data)
+      Object.assign(formValue.value, omit(props.data, ['author']))
     }
     return props.modelValue
   },
@@ -192,7 +193,6 @@ const handleClose = () => {
 
 const handleSubmitEdit = async () => {
   const newBlogInfo = toRaw(formValue.value)
-  console.log(newBlogInfo)
   try {
     const result = await editBlogInfo(newBlogInfo)
     message.success(result)

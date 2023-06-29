@@ -2,7 +2,7 @@ interface Card {
   id: string
   title: string
   author: string
-  type: keyof typeof BlogType
+  type: BlogType
   tag: { name: string; color: TagColor }
   publishDate: string
   updateDate: string
@@ -24,12 +24,12 @@ type TagColor = 'yellow' | 'pink' | 'green' | 'indigo'
 // }
 
 enum BlogType {
-  'meat-dish' = 1,
-  'vegetable-dish',
-  'staple',
-  'dessert',
-  'drink',
-  'soup',
+  'front-end-tec' = 1,
+  'node',
+  'math',
+  'life',
+  'back-end-tec',
+  'other-tec',
 }
 
 interface OutlineItem {

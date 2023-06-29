@@ -3,28 +3,28 @@ import { BlogType } from '@/types'
 
 export const typeOptions = ref([
   {
-    label: '肉菜',
-    value: BlogType['meat-dish'],
+    label: '前端技术',
+    value: BlogType['front-end-tec'],
   },
   {
-    label: '素菜',
-    value: BlogType['vegetable-dish'],
+    label: 'Node',
+    value: BlogType['node'],
   },
   {
-    label: '主食',
-    value: BlogType['staple'],
+    label: '数学',
+    value: BlogType['math'],
   },
   {
-    label: '甜点',
-    value: BlogType['dessert'],
+    label: '生活随笔',
+    value: BlogType['life'],
   },
   {
-    label: '饮品',
-    value: BlogType['drink'],
+    label: '后端技术',
+    value: BlogType['back-end-tec'],
   },
   {
-    label: '汤',
-    value: BlogType['soup'],
+    label: '其他技术',
+    value: BlogType['other-tec'],
   },
 ])
 

@@ -1,10 +1,10 @@
 import { BlogType } from '@/types'
 
 export const BlogType2Ch = {
-  [BlogType['meat-dish']]: '肉菜',
-  [BlogType['vegetable-dish']]: '素菜',
-  [BlogType['staple']]: '主食',
-  [BlogType['dessert']]: '甜点',
-  [BlogType['drink']]: '饮品',
-  [BlogType['soup']]: '汤',
+  [BlogType['front-end-tec']]: '前端技术',
+  [BlogType['node']]: 'Node',
+  [BlogType['math']]: '数学',
+  [BlogType['life']]: '生活随笔',
+  [BlogType['back-end-tec']]: '后端技术',
+  [BlogType['other-tec']]: '其他技术',
 }

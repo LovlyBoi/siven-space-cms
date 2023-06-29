@@ -121,7 +121,7 @@ const formValue = ref<BlogToPost>({
   id: '',
   title: '',
   author: userStore.userInfo?.id || '',
-  type: BlogType.staple,
+  type: BlogType['front-end-tec'],
   tag: {
     name: '',
     color: 'indigo',
