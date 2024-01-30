@@ -6,7 +6,7 @@
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview",
-    "prepare": "husky install && husky add .husky/commit-msg 'pnpm commitlint --edit $1'",
+    "prepare": "husky install && husky add .husky/commit-msg 'yarn commitlint --edit $1'",
     "commit": "git-cz"
   },
   "config": {
@@ -22,7 +22,7 @@
     "lodash-es": "^4.17.21",
     "mavon-editor": "3.0.0-beta",
     "pinia": "^2.0.22",
-    "vue": "^3.2.37",
+    "vue": "^3.4.15",
     "vue-router": "^4.1.5",
     "vue-toast-notification": "^3.1.1"
   },
@@ -55,8 +55,7 @@
     "terser": ">=5.4.0 <6.0.0",
     "typescript": "^4.6.4",
     "vfonts": "^0.0.3",
-    "vite": "^3.1.0",
-    "vite-aliases": "^0.9.2",
+    "vite": "^5.0.12",
     "vite-plugin-compression": "^0.5.1",
     "vite-plugin-eslint": "^1.8.1",
     "vue-tsc": "^0.40.4"

@@ -48,7 +48,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, h, ref } from 'vue'
+import { h, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import {
   NCard,
@@ -221,8 +221,17 @@ const createColumns = (): DataTableColumns<CardWithAudit> => {
                     NSpace,
                     {},
                     {
-                      default: () =>
-                        pictures.map((pic) => {
+                      default: () => {
+                        const picturesUrl = pictures.map((url) => {
+                          const { pathname } = new URL(url)
+                          let baseUrl = import.meta.env.VITE_AXIOS_BASEURL
+                          if (baseUrl?.endsWith('/')) {
+                            baseUrl = baseUrl.slice(0, -1)
+                          }
+                          return baseUrl + pathname
+                        })
+
+                        return picturesUrl.map((pic) => {
                           return h(NImage, {
                             src: pic + '?w=70',
                             previewSrc: pic,
@@ -230,7 +239,8 @@ const createColumns = (): DataTableColumns<CardWithAudit> => {
                             height: '50',
                             objectFit: 'cover',
                           })
-                        }),
+                        })
+                      },
                     }
                   ),
               }

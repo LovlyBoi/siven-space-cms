@@ -204,23 +204,26 @@ const createColumns = (): DataTableColumns<CardWithAudit> => {
               NImageGroup,
               {},
               {
-                default: () =>
-                  h(
-                    NSpace,
-                    {},
-                    {
-                      default: () =>
-                        pictures.map((pic) => {
-                          return h(NImage, {
-                            src: pic + '?w=70',
-                            previewSrc: pic,
-                            width: '50',
-                            height: '50',
-                            objectFit: 'cover',
-                          })
-                        }),
+                default: () => {
+                  const picturesUrl = pictures.map((url) => {
+                    const { pathname } = new URL(url)
+                    let baseUrl = import.meta.env.VITE_AXIOS_BASEURL
+                    if (baseUrl?.endsWith('/')) {
+                      baseUrl = baseUrl.slice(0, -1)
                     }
-                  ),
+                    return baseUrl + pathname
+                  })
+
+                  return picturesUrl.map((pic) => {
+                    return h(NImage, {
+                      src: pic + '?w=70',
+                      previewSrc: pic,
+                      width: '50',
+                      height: '50',
+                      objectFit: 'cover',
+                    })
+                  })
+                },
               }
             )
           : h('span', { class: 'text-gray-400' }, '暂无封面')
