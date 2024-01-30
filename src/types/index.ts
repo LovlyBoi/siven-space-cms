@@ -75,7 +75,8 @@ export interface UserInfo {
   id: string
   userName: string
   role: 1 | 2 | 3
-  avatar: string
+  avatar?: string
+  createDate: string
 }
 
 export type UserInfoWithUnuse = UserInfo & { unuse: 0 | 1 }

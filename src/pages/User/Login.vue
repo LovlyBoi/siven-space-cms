@@ -113,12 +113,12 @@ const handleLogin = async () => {
     .then(() => {
       router.push('/blogs/all-blogs')
     })
-    .catch((errMsg) => {
-      console.error(errMsg)
-      if (errMsg === '密码错误') {
-        passwordInputRef.value?.shake(errMsg)
-      } else if (errMsg === '该用户尚未注册') {
-        usernameInputRef.value?.shake(errMsg)
+    .catch((error) => {
+      console.error(error)
+      if (error?.status === 403) {
+        passwordInputRef.value?.shake('密码错误')
+      } else if (error?.status === 406) {
+        usernameInputRef.value?.shake('该用户名尚未注册')
       }
     })
 }

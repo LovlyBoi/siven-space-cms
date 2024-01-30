@@ -27,18 +27,16 @@ instance.interceptors.response.use(
   (error) => {
     // token过期自动续签
     const { config } = error
-    const { status, data } = error.response
-    if (status === 401 && data === 'jwt expired') {
+    const { status } = error.response
+    if (status === 401) {
+      // 重试token续约
       console.log('token 过期')
       const token = getChache<Tokens>('user_token')
       if (token?.refreshToken) {
         return refreshToken(token?.refreshToken)
-          .then(({ isSuccess, token }) => {
-            if (!isSuccess) {
-              return Promise.reject('refresh_token 过期')
-            }
+          .then((tokens) => {
             console.log('token 续签成功')
-            setCache('user_token', token)
+            setCache('user_token', tokens)
             console.log('开始重新请求')
             return instance(config)
           })
@@ -49,15 +47,20 @@ instance.interceptors.response.use(
             console.log(err, 'token 续签失败')
           })
       } else {
+        console.log('token 续签失败')
         return Promise.reject(error)
       }
+    } else {
+      return Promise.reject(error.response)
     }
   }
 )
 
 async function request<T>(config: AxiosRequestConfig): Promise<T> {
-  const { data } = await instance.request<T>(config)
-  return data
+  const res = await instance.request<T>(config)
+  console.log(res, '++res')
+  return res.data
+  // return instance.request<T>(config)
 }
 
 export { request }
