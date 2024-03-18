@@ -124,7 +124,7 @@ const createColumns = (): DataTableColumns<CardWithAudit> => {
       title: '类型',
       key: 'type',
       render({ type }) {
-        return h('span', {}, type)
+        return h('span', {}, BlogType2Ch[type])
       },
     },
     {
