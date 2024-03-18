@@ -38,7 +38,7 @@ export const useUserStore = defineStore('userStore', {
       })
     }
 
-    function initUserInfo(tokens: Tokens) {
+    function initUserInfo() {
       return new Promise<UserInfo>((resolve, reject) => {
         const info = getChache<UserInfo>('user_info')
         if (info && info.id) {
@@ -64,7 +64,7 @@ export const useUserStore = defineStore('userStore', {
           .then((tokens) => {
             console.log('token 恢复成功')
             t = tokens
-            return initUserInfo(tokens)
+            return initUserInfo()
           })
           .then((info) => {
             console.log('用户信息 恢复成功')

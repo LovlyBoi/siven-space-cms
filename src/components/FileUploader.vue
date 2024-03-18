@@ -23,17 +23,20 @@ export default defineComponent({
 
     const fileUploaderRef = ref<InstanceType<typeof NUpload>>()
 
-    const fileLoader = ({ file, data }: UploadCustomRequestOptions) => {
+    const fileLoader = (
+      { file, data }: UploadCustomRequestOptions,
+      name = 'file'
+    ) => {
       const formData = new FormData()
       if (data) {
         Object.keys(data).forEach((key) => {
           formData.append(
-            'file',
+            name,
             data[key as keyof UploadCustomRequestOptions['data']]
           )
         })
       }
-      formData.append('file', file.file as File)
+      formData.append(name, file.file as File)
       return formData
     }
 
@@ -47,13 +50,13 @@ export default defineComponent({
           data,
           headers as Record<string, string>
         )
-        record = id
+        record = [id]
       } else if (props.type === 'image') {
-        const { url } = await uploadImage(
+        const { filename } = await uploadImage(
           data,
           headers as Record<string, string>
         )
-        record = url
+        record = [filename]
       }
       return record
     }
@@ -70,7 +73,10 @@ export default defineComponent({
       options: UploadCustomRequestOptions
     ) => {
       const { file, headers, onError, onFinish } = options
-      const formData = fileLoader(options)
+      const formData = fileLoader(
+        options,
+        props.type === 'image' ? 'img' : 'file'
+      )
       try {
         const nextPart = await uploadItem(
           formData,
@@ -124,8 +130,13 @@ export default defineComponent({
     }
   },
   render() {
-    let { $attrs, $slots, $props, handleFileUploadRequest, handleFileRemove } =
-      this
+    const {
+      $attrs,
+      $slots,
+      $props,
+      handleFileUploadRequest,
+      handleFileRemove,
+    } = this
 
     const staticProps = {
       defaultFileList: [],

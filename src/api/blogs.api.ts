@@ -8,17 +8,34 @@ export function getAllBlogs() {
   })
 }
 
-export function getBlogsByAuthor() {
+// export function getBlogsByAuthor() {
+//   return request<{ cards: CardWithAudit[]; hasNext: boolean }>({
+//     method: 'GET',
+//     url: '/blogs/blogsByAuthor',
+//   })
+// }
+
+export function getBlogsByAuthor(authorId: string) {
   return request<{ cards: CardWithAudit[]; hasNext: boolean }>({
     method: 'GET',
-    url: '/blogs/blogsByAuthor',
+    url: '/blogs',
+    params: {
+      from: 'cms',
+      type: 'all',
+      author: authorId,
+    },
   })
 }
 
-export function getBlogsToBeAudit() {
+export function getBlogsToBeAudit(authorId: string) {
   return request<{ cards: CardWithAudit[]; hasNext: boolean }>({
     method: 'GET',
-    url: '/blogs/blogsToBeAudit',
+    url: '/blogs/audit',
+    params: {
+      from: 'cms',
+      type: 'all',
+      author: authorId,
+    },
   })
 }
 
@@ -54,9 +71,13 @@ export function getBlogById<T = Blog>(id: string, type = '') {
 
 export function publishBlog(blog: BlogToPost) {
   return request<string>({
-    method: 'POST',
-    url: '/blogs/publish',
-    data: blog,
+    method: 'PUT',
+    url: '/blogs',
+    data: {
+      ...blog,
+      tagName: blog.tag.name,
+      tagColor: blog.tag.color,
+    },
   })
 }
 
@@ -97,11 +118,11 @@ export function getTopNBlogs(n: number) {
 
 export function auditBlog(
   blogId: string,
-  state: 0 | 2,
+  state: boolean,
   msg: string | undefined = void 0
 ) {
   return request({
-    method: 'POST',
+    method: 'PATCH',
     url: `/blogs/audit/${blogId}`,
     data: {
       state,

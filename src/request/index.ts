@@ -58,7 +58,6 @@ instance.interceptors.response.use(
 
 async function request<T>(config: AxiosRequestConfig): Promise<T> {
   const res = await instance.request<T>(config)
-  console.log(res, '++res')
   return res.data
   // return instance.request<T>(config)
 }

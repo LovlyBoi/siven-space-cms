@@ -1,7 +1,10 @@
 <template>
   <div class="p-4">
     <NCard>
-      {{ dailyGreeting }}{{ `，${userStore.userInfo?.userName}` || '' }}。
+      {{ dailyGreeting
+      }}{{
+        userStore.userInfo?.username && `，${userStore.userInfo?.username}`
+      }}。
     </NCard>
   </div>
 </template>
@@ -12,6 +15,8 @@ import { NCard } from 'naive-ui'
 import { useUserStore } from '@/store/user'
 
 const userStore = useUserStore()
+
+console.log(userStore.userInfo)
 
 const dailyGreeting = computed(() => {
   const now = new Date()

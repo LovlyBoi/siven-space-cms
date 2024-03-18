@@ -4,8 +4,8 @@ export function uploadMarkdown(
   data: FormData,
   headers?: Record<string, string>
 ) {
-  return request<{ id: string[]; msg: string }>({
-    url: '/upload/markdown',
+  return request<{ id: string }>({
+    url: '/blogs/upload',
     method: 'POST',
     data,
     headers,
@@ -13,8 +13,8 @@ export function uploadMarkdown(
 }
 
 export function uploadImage(data: FormData, headers?: Record<string, string>) {
-  return request<{ url: string[]; msg: string }>({
-    url: '/upload/image',
+  return request<{ filename: string }>({
+    url: '/image',
     method: 'POST',
     data,
     headers,

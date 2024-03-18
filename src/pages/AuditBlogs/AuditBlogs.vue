@@ -126,6 +126,7 @@ const createColumns = (): DataTableColumns<CardWithAudit> => {
       title: '类型',
       key: 'type',
       render({ type }) {
+        console.log(BlogType2Ch, type, '++')
         return h('span', {}, BlogType2Ch[type])
       },
     },
@@ -206,12 +207,11 @@ const createColumns = (): DataTableColumns<CardWithAudit> => {
               {
                 default: () => {
                   const picturesUrl = pictures.map((url) => {
-                    const { pathname } = new URL(url)
                     let baseUrl = import.meta.env.VITE_AXIOS_BASEURL
                     if (baseUrl?.endsWith('/')) {
                       baseUrl = baseUrl.slice(0, -1)
                     }
-                    return baseUrl + pathname
+                    return `${baseUrl}/image/${url}`
                   })
 
                   return picturesUrl.map((pic) => {
@@ -317,13 +317,13 @@ const handleConfirmAccessAudit = (row: CardWithAudit) => {
 }
 
 const accessAudit = (blogId: string) => {
-  auditBlog(blogId, 0).then(() => {
+  auditBlog(blogId, true).then(() => {
     getData()
   })
 }
 
 const noAccessAudit = (blogId: string, msg: string) => {
-  auditBlog(blogId, 2, msg).then(() => {
+  auditBlog(blogId, false, msg).then(() => {
     getData()
   })
 }
@@ -398,8 +398,9 @@ let error = ref(false)
 
 function getData() {
   loading.value = true
-  getBlogsToBeAudit()
+  getBlogsToBeAudit(userStore.userInfo?.id || '')
     .then(({ cards: data }) => {
+      console.log(data)
       cards.value = data
     })
     .catch((err) => {

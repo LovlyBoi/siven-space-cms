@@ -18,18 +18,13 @@ type BlogToPost = Omit<Card, 'publishDate' | 'updateDate'>
 
 type TagColor = 'yellow' | 'pink' | 'green' | 'indigo'
 
-// enum BlogType {
-//   'note' = 1,
-//   'essay' = 2,
-// }
-
 enum BlogType {
-  'front-end-tec' = 1,
-  'node',
-  'math',
-  'life',
-  'back-end-tec',
-  'other-tec',
+  'front-end-tec' = 'front-end-tec',
+  'node' = 'node',
+  'math' = 'math',
+  'life' = 'life',
+  'back-end-tec' = 'back-end-tec',
+  'other-tec' = 'other-tec',
 }
 
 interface OutlineItem {
@@ -73,7 +68,7 @@ export interface Tokens {
 
 export interface UserInfo {
   id: string
-  userName: string
+  username: string
   role: 1 | 2 | 3
   avatar?: string
   createDate: string

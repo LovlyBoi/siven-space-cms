@@ -70,6 +70,7 @@ import { BlogType2Ch } from '@/utils/blogTypeToCh'
 import { mapColor, CardWithAudit } from '@/types'
 import dayjs from '@/utils/day'
 import { getBlogsByAuthor, deleteBlog } from '@/api'
+import { useUserStore } from '@/store/user'
 
 const cards = ref<CardWithAudit[]>()
 
@@ -79,6 +80,8 @@ const showModal = ref(false)
 
 const message = useMessage()
 const dialog = useDialog()
+
+const userStore = useUserStore()
 
 const rowBlogForEditModal = ref<CardWithAudit | null>(null)
 
@@ -121,7 +124,7 @@ const createColumns = (): DataTableColumns<CardWithAudit> => {
       title: '类型',
       key: 'type',
       render({ type }) {
-        return h('span', {}, BlogType2Ch[type])
+        return h('span', {}, type)
       },
     },
     {
@@ -211,6 +214,7 @@ const createColumns = (): DataTableColumns<CardWithAudit> => {
       title: '封面',
       key: 'cover',
       render: ({ pictures }) => {
+        console.log(pictures)
         return pictures.length > 0
           ? h(
               NImageGroup,
@@ -223,12 +227,11 @@ const createColumns = (): DataTableColumns<CardWithAudit> => {
                     {
                       default: () => {
                         const picturesUrl = pictures.map((url) => {
-                          const { pathname } = new URL(url)
                           let baseUrl = import.meta.env.VITE_AXIOS_BASEURL
                           if (baseUrl?.endsWith('/')) {
                             baseUrl = baseUrl.slice(0, -1)
                           }
-                          return baseUrl + pathname
+                          return `${baseUrl}/image/${url}`
                         })
 
                         return picturesUrl.map((pic) => {
@@ -357,9 +360,12 @@ let loading = ref(true)
 let error = ref(false)
 
 function getData() {
+  if (!userStore.userInfo) return
+
   loading.value = true
-  getBlogsByAuthor()
+  getBlogsByAuthor(userStore.userInfo?.id || '')
     .then(({ cards: data }) => {
+      console.log(data)
       cards.value = data
     })
     .catch((err) => {

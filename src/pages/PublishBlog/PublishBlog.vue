@@ -201,9 +201,10 @@ const handleMarkdownRemove = () => (formValue.value.id = '')
 
 const handleSubmit = async () => {
   // TODO: 提交blog
+  console.log(formValue.value, '==')
   try {
-    const request = await publishBlog(formValue.value)
-    console.log(request)
+    const res = await publishBlog(formValue.value)
+    console.log(res)
     message.success('发布成功')
     Object.assign(formValue.value, {
       id: '',

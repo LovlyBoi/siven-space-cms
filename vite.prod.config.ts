@@ -24,7 +24,7 @@ const config: UserConfig = {
   resolve: {
     alias: {
       '@': '/src',
-    }
+    },
   },
 }
 
