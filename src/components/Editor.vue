@@ -24,7 +24,7 @@ const editorRef = ref<any>(null)
 async function handleImgAdd(filename: string, imgFile: File) {
   const data = new FormData()
   data.append('file', imgFile)
-  const { url } = await uploadImage(data)
+  const { filename: url } = await uploadImage(data)
   editorRef.value?.$img2Url(filename, url[0])
 }
 </script>

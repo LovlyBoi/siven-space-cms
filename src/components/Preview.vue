@@ -31,7 +31,7 @@ const props = defineProps({
 
 const BlogMarkdown = ref('')
 
-getBlogById<string>(props.blogId, 'markdown')
+getBlogById<string>(props.blogId)
   .then((markdown) => {
     BlogMarkdown.value = markdown + ''
   })

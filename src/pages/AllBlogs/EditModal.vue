@@ -71,20 +71,15 @@
           <n-upload
             abstract
             :action="`${baseUrl}/upload/markdown/reupload/${data?.id || ''}`"
-            :headers="{
-              // 'naive-info': 'hello!',
-            }"
-            :data="{
-              // id: data?.id || '',
-            }"
             @finish="handleReUploadFinish"
           >
             <n-upload-trigger #="{ handleClick }" abstract>
               <span
                 class="mx-1 text-green-700 underline cursor-pointer hover:text-green-600"
                 @click="handleClick"
-                >重新上传</span
               >
+                重新上传
+              </span>
             </n-upload-trigger>
           </n-upload>
           。

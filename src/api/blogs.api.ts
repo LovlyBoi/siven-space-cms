@@ -59,13 +59,10 @@ export function getEssays() {
   })
 }
 
-export function getBlogById<T = Blog>(id: string, type = '') {
-  const params: Record<string, string> = {}
-  type ? (params.type = type) : null
+export function getBlogById<T = Blog>(id: string) {
   return request<T>({
-    method: 'POST',
-    url: `/blogs/article/${id}`,
-    params,
+    method: 'GET',
+    url: `/blogs/markdown/${id}`,
   })
 }
 

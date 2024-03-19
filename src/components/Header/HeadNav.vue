@@ -19,7 +19,7 @@
       </div>
       <div class="flex items-center pr-8" v-else>
         <NDropdown :options="dropdownOptions">
-          <NAvatar>{{ userStore.userInfo?.userName }}</NAvatar>
+          <NAvatar>{{ userStore.userInfo?.username }}</NAvatar>
         </NDropdown>
       </div>
     </div>

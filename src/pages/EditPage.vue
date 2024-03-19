@@ -31,7 +31,7 @@ const submiting = ref(false)
 const route = useRoute()
 const blogId = route.params.id as string
 
-getBlogById<string>(blogId, 'markdown')
+getBlogById<string>(blogId)
   .then((markdown) => {
     BlogMarkdown.value = markdown + ''
   })

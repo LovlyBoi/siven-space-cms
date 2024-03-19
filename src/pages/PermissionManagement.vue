@@ -82,7 +82,7 @@ const handleSearch = () => {
   searchUser(userIdOrName.value)
     .then((data) => {
       console.log(data)
-      userList.value = data
+      userList.value = data as UserInfoWithUnuse[]
     })
     .catch((err) => {
       console.log(err)
@@ -227,7 +227,7 @@ const handleUpgradeConfirm = (row: UserInfoWithUnuse, action: 1 | -1) => {
   }
   dialog.warning({
     title: '警告',
-    content: `确定要将用户「${row.userName}」晋升为「${roleList[newRole]}」吗？`,
+    content: `确定要将用户「${row.username}」晋升为「${roleList[newRole]}」吗？`,
     action: () =>
       h(
         NSpace,
