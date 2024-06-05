@@ -97,9 +97,13 @@ export function editBlogMarkdown(id: string, content: string) {
 
 export function editBlogInfo(newBlogInfo: BlogToPost) {
   return request<string>({
-    method: 'POST',
-    url: '/blogs/edit/blog',
-    data: newBlogInfo,
+    method: 'PATCH',
+    url: `/blogs/${newBlogInfo.id}`,
+    data: {
+      ...newBlogInfo,
+      tagName: newBlogInfo.tag.name,
+      tagColor: newBlogInfo.tag.color,
+    },
   })
 }
 
