@@ -68,7 +68,7 @@ export function getBlogById<T = Blog>(id: string) {
 
 export function publishBlog(blog: BlogToPost) {
   return request<string>({
-    method: 'PUT',
+    method: 'POST',
     url: '/blogs',
     data: {
       ...blog,
@@ -87,8 +87,8 @@ export function deleteBlog(id: string) {
 
 export function editBlogMarkdown(id: string, content: string) {
   return request<string>({
-    method: 'POST',
-    url: `/blogs/edit/markdown/${id}`,
+    method: 'PUT',
+    url: `/blogs/markdown/${id}`,
     data: {
       content,
     },

@@ -70,8 +70,11 @@
           或
           <n-upload
             abstract
-            :action="`${baseUrl}/upload/markdown/reupload/${data?.id || ''}`"
+            :action="`${baseUrl}/blogs/upload/${data?.id || ''}`"
             @finish="handleReUploadFinish"
+            :headers="{
+              Authorization: `${token?.accessToken}`,
+            }"
           >
             <n-upload-trigger #="{ handleClick }" abstract>
               <span
@@ -119,15 +122,18 @@ import {
   useMessage,
 } from 'naive-ui'
 import type { UploadFileInfo } from 'naive-ui'
-import { BlogToPost, BlogType, Card } from '@/types'
+import { BlogToPost, BlogType, Card, Tokens } from '@/types'
 import { useUserStore } from '@/store/user'
 import { typeOptions, tagColorOptions } from '../PublishBlog/options'
 import { omit } from 'lodash-es'
 import { editBlogInfo } from '@/api'
+import { getChache } from '@/utils/useCache'
 
 const userStore = useUserStore()
 
 const emit = defineEmits(['update:modelValue', 'update'])
+
+const token = getChache<Tokens>('user_token')
 
 const props = defineProps({
   modelValue: {
@@ -166,7 +172,7 @@ const handleReUploadFinish = ({
   file: UploadFileInfo
   event?: ProgressEvent
 }) => {
-  message.success(JSON.parse((event?.target as XMLHttpRequest).response).msg)
+  message.success(`上传成功`)
 }
 
 const showModal = computed({
