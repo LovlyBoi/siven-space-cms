@@ -140,9 +140,7 @@ const handleSubmit = async () => {
   if (!props.formData) return
   submiting.value = true
   const fd = props.formData
-  const {
-    id: [blogId],
-  } = await uploadMarkdown(fd)
+  const { id: blogId } = await uploadMarkdown(fd)
   formValue.value.id = blogId
   const newBlogInfo = toRaw(formValue.value)
   console.log(newBlogInfo)
