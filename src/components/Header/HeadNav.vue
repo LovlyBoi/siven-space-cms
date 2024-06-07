@@ -11,11 +11,11 @@
           to="/user/login"
           >log in</router-link
         >
-        <div
+        <!-- <div
           class="px-2 ml-4 text-green-600 border border-green-600 rounded cursor-pointer setup-btn leading-11 hover:text-green-500 hover:border-green-500"
         >
           <router-link to="/user/register">set up for free</router-link>
-        </div>
+        </div> -->
       </div>
       <div class="flex items-center pr-8" v-else>
         <NDropdown :options="dropdownOptions">
