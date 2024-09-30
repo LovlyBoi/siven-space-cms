@@ -398,7 +398,8 @@ let error = ref(false)
 
 function getData() {
   loading.value = true
-  getBlogsToBeAudit(userStore.userInfo?.id || '')
+  // getBlogsToBeAudit(userStore.userInfo?.id || '')
+  getBlogsToBeAudit()
     .then(({ cards: data }) => {
       console.log(data)
       cards.value = data

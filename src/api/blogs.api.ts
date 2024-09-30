@@ -27,14 +27,14 @@ export function getBlogsByAuthor(authorId: string) {
   })
 }
 
-export function getBlogsToBeAudit(authorId: string) {
+export function getBlogsToBeAudit() {
   return request<{ cards: CardWithAudit[]; hasNext: boolean }>({
     method: 'GET',
     url: '/blogs/audit',
     params: {
       from: 'cms',
       type: 'all',
-      author: authorId,
+      // author: authorId,
     },
   })
 }

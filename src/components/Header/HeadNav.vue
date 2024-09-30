@@ -30,7 +30,7 @@
 import { h } from 'vue'
 import type { Component } from 'vue'
 import { NAvatar, NDropdown, NIcon } from 'naive-ui'
-import ViteLogo from '/public/vite.svg'
+import ViteLogo from '/vite.svg'
 import {
   PersonCircleOutline as UserIcon,
   Pencil as EditIcon,
